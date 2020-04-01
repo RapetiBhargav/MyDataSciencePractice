@@ -2,7 +2,7 @@
 """
 Created on Wed Apr  1 20:46:51 2020
 
-@author: sowja
+@author: Bhargav
 """
 
 from sklearn.preprocessing import scale
