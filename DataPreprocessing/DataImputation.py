@@ -9,7 +9,7 @@ from sklearn.impute import SimpleImputer
 import numpy as np
 
 data=np.array([[ 1.,  2., np.nan,  2.],
-       [ 5., np.nan,  1.,  2.],
+       [ 5.,None,  1.,  2.],
        [ 4., np.nan,  3., np.nan],
        [ 5.,  6.,  8.,  1.],
        [np.nan,  7., np.nan,  0.]])
