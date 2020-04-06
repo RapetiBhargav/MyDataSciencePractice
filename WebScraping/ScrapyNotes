@@ -1,0 +1,155 @@
+CSS and XPath Selectors in Scrapy
+Scrapy command shell to prototype the selectors..then we go ahead and build spiders
+Spiders are the heart of scrapy framework- Python classes which are called by the scrapy framework.They specify what to crawl, process,
+grouping of data(using items)
+Item pipelines allow us to chain tranformations on data before they are saved to file using feed exporters
+data processing using i/p and o/p processors
+Broad crawl of thousands of sites and advanced features like auto throttling of request to web-sites
+You can also take your spiders to the cloud using the scrapycloud
+ScrapyCloud has Portia-- You can build spider without writing a single line of code
+
+Aim: to build our own spiders and crawlers from any website on the internet
+
+The scrapy shell is an interactive shell to quickly test data extraction
+Selectors allows you to specify CSS and XPath to extract info
+
+Spiders- Items, Item Loaders , Item Pipelines
+
+Built-in services that scrapy offers:
+1.Logging , email notifications
+2.Debugging using the telnet console
+- Debug crawlers using the Telnet console
+3. Broad crawlers makes concurrent requests to multiple sites inorder to speed up the crawling process 
+4. Auto throttle crawls(due to website policies)
+
+Crawlers on scrapycloud 
+Deploying a Scrapy project on scrapinghub.com
+You can build your spiders and deploy on cloud or built in on cloud using Portia(drag and drop way to scrape websites)
+
+Scrapy was originally built for web scraping, but now used for web crawling
+
+Difference between Web Scraping and Web Crawlers
+
+Scrapy is an application framework and not a library
+
+Difference between a Library and Framework
+Hollywood Principle: Don't call us, we'll call you.
+
+Framework vs Library- Inversion of control
+
+Inherently Fragile like Regex and other related tools
+
+Benifits of Scrapy:
+1.Asynchronous Callbacks (Advantages:Speed, Parallelism, Fault-Tolerance)
+2.Granular Control-Settings to govern politeness of crawl, error handling etc
+Scrapy has ways to specify download delays b/w requests(makes sure the bot is not denied by that website)
+Limit on concurrent connections(Per IP , Per domain)
+Auto-Throttling Extension(useful since lot of websites have anit-scrapping mechanisims)
+
+pip install scrapy
+It is recommended that you install Scrapy inside a virtual environment so that it does not conflict with other installed packages.
+pip install virtualenv
+Then install Scrapy, if you want to isolate scrapy from your packages.
+
+scrapy bench--> benchmarking test of how scrapy runs on your hardware.Sets up a local http server and crawls it at a maximum speed
+scrapy fetch--> downloads the html file and writes content to stdout(terminal window)
+scrapy fetch --nolog https://www.google.com
+scrapy settings -->show project specific settings , if you run it inside a project
+scrapy view <website>-->downloads to disk and opens in browser (used only with static content)
+
+scrapy view https://www.pluralsight.com/authors
+scrapy splach to view dynamic content
+
+Intro to Scrapy Shell:
+----------------------
+scrapy shell http://quotes.toscrape.com/page/1/
+We can see scrapy objects(to crawl sites, parse responses, configure settings etc)
+
+crawler-->entry point to scrapy API , provides access to core components including execution engine, settings and stats
+
+file:///C:/Users/sowja/AppData/Local/Temp/tmpq3nx_0tw.html
+
+
+/html/body/div/div[2]/div[1]/div[1]/span[1]/text()
+
+http://quotes.toscrape.com/robots.txt
+
+
+Running Spiders to Crawl webpages - Example in code
+Using Crawl Spiders to follow link extraction 
+Specifying Link extraction rules			  --- Example in code for these 2	
+Crawling CSV files --- Example for this
+
+Crawl spiders are used typically when you want to extract links from a certain page and follow those links
+
+scrapy crawl <projectname>-->> to run a crawler
+
+Using Items to store data structure:
+------------------------------------
+Item is a data structure that allows you to group scraped data together in a form similar to python dictionary
+Items are similar to python dictionary, but with a fixed number of keys. New keys cannot be added later.
+
+class ProductItem(scrapy.Item):
+	title=scrapy.Field()
+	price=scrapy.Field()
+	link=scrapy.Field()
+	
+so only 3 keys are there here.
+
+product1=ProductItem()
+
+from pprint import pprint
+
+search_results=response.css('ul.s-result-list')
+pprint(search_results.css('.s-access-title::text').extract())
+product1['title']=search_results.css('.s-access-title::text').extract_first()
+
+pprint(response.css('a.s-access-detail-page::attr(href)')).extract())
+product1['link']=search_results.css('a.s-access-detail-page::attr(href)').extract_first()
+
+pprint(response.css('.s-price::text')).extract())
+product1['price']=search_results.css('.s-price::text').extract_first()
+
+Using Items with Spiders:
+Use the Item prototype which we built above in a Spider project.
+Example in code.
+
+MapCompose:MapCompose is a built-in processor which will apply a sequence of functions to any list passed to it.
+
+To configure our spider to use the pipelines, we need to modify the settings.py
+
+Building Crawlers using Built-in Services in Scrapy
+----------------------------------------------------
+For Crawling websites at scale.
+Logging events to console and to file
+Using the telnet utility to debug crawlers
+
+You can pause/restart crawlers, Crawl statistics.
+
+Usually logging ill log to the scrapy shell , when you run.
+But in production you might want to modify settings.py to write the logs out to a file.
+
+LOG_ENABLED=True
+LOG_FILE='tmp/log.txt'
+LOG_LEVEL='DEBUG' -->> Log levels can be DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+Deploying Crawlers using Scrapy Cloud:
+--------------------------------------
+ScrapingHub Ltd is the developer and maintainer of the Scrapy Library.- 
+
+Developer tools on the cloud which allow you to scrape at scale.
+
+app.scrapyhub.com
+
+Deploying your spiders, we have 2 ways.
+1. Portia - where you cna build it by drap and drop
+2. Scrapy - Use the Scrapy spider which you prototyped on your machine
+
+We'll discuss 2nd option now
+Install shub package on your local machine in order to deploy our scrapy spider to cloud.
+pip install shub
+cd <project you want to deploy>
+shub login
+Enter your API key from https://app.scrapinghub.com/account/apikey
+shub deploy 313300 --->> this was used to deploy ItemLoader to scrapycloud in our example
+
