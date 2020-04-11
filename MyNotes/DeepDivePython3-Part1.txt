@@ -1,0 +1,472 @@
+﻿The open-source Anaconda Distribution is the easiest way to perform Python/R data science and machine learning on Linux, Windows, and Mac OS X. 
+With over 19 million users worldwide, it is the industry standard for developing, testing, and training on a single machine, 
+enabling individual data scientists to:
+Quickly download 7,500+ Python/R data science packages
+Manage libraries, dependencies, and environments with Conda
+Develop and train machine learning and deep learning models with scikit-learn, TensorFlow, and Theano
+Analyze data with scalability and performance with Dask, NumPy, pandas, and Numba
+Visualize results with Matplotlib, Bokeh, Datashader, and Holoviews
+
+Anaconda Cloud:
+Where packages, notebooks, projects and environments are shared.
+Your place for free public conda package hosting.
+
+Conda is an open source package management system and environment management system included in Anaconda.
+Conda is a powerful package manager and environment manager that you use with command line commands at the Anaconda Prompt
+
+Beyond the collection of open source
+packages in the Anaconda installer, you can use Conda to install over 1.5k packages
+(including the R language) from the Anaconda public repository and more than 20k
+packages from community channels, such as Conda-forge and bioconda.
+
+PyData: A community for developers and users of open source data tools
+PyData is an educational program of NumFOCUS, a 501(c)(3) nonprofit charity.They have meetups you can join.
+
+Python is an interpreted language, which can save you considerable time during program development because no compilation and linking is necessary. 
+The interpreter can be used interactively.
+
+On BSD’ish Unix systems, Python scripts can be made directly executable, like shell scripts, by putting the line
+#!/usr/bin/env python3.5
+# -*- coding: cp1252 -*-       -->>> In such case add the encoding line like this.
+
+By default, Python source files are treated as encoded in UTF-8.
+a special comment line should be added as the first line of the file if you want to change it to cp1252.
+# -*- coding: cp1252 -*-
+
+Python enables programs to be written compactly and readably. Programs written in Python are typically much shorter than equivalent C, C++, or Java programs, 
+for several reasons:
+
+-->>the high-level data types allow you to express complex operations in a single statement;
+-->>statement grouping is done by indentation instead of beginning and ending brackets;
+-->>no variable or argument declarations are necessary.
+
+Python is extensible: if you know how to program in C it is easy to add a new built-in function or module to the interpreter, 
+either to perform critical operations at maximum speed, or to link Python programs to libraries that may only be available in binary form 
+(such as a vendor-specific graphics library). Once you are really hooked, you can link the Python interpreter into an application written in C 
+and use it as an extension or command language for that application.
+
+Dive into Python 3 by Mark Pilgrim
+
+Python 2 vs 3: lot of those things are syntax changes
+
+Python 2 had “strings” and “Unicode strings.” Python 3 has “bytes” and “strings.”
+Python 3 will never implicitly convert between strings and bytes
+
+difference between reading files in “binary” and “text” mode
+Reading/writing files in text mode requires an encoding parameter.
+
+The httplib2 module fetches headers and data over http. http headers are returned as strings, but the http body is returned as bytes.
+
+In Serializing Python Objects, you’ll learn why the pickle module in Python 3 defines a new data format that is backwardly incompatible with Python 2
+Python 3 supports serializing objects to and from Json, which doesn’t even have a byte type. I’ll show you how to hack around that.
+
+string formatting in Python 3(Learn about Unicode)
+
+Iterators are everywhere in Python 3.  
+lots of functions that used to return lists in Python 2 will now return iterators in Python 3.
+
+Your First Python Program:
+The Python interpreter executed the script you wrote. 
+print()
+There are lots of built-in functions, and lots more functions that are separated into modules
+
+every Python function returns a value; if the function ever executes a return statement, it will return that value, 
+otherwise it will return None, the Python null value
+In Python, you never explicitly specify the datatype of anything. Based on what value you assign, Python keeps track of the datatype internally.
+
+Default argument, named arguments.
+As soon as you have a named argument, all arguments to the right of that need to be named arguments, too.
+
+You can document a Python function by giving it a documentation string (docstring for short)
+
+Triple quotes signify a multi-line string.
+Every function deserves a decent docstring.
+
+Python gives you an added incentive: the docstring is available at runtime as an attribute of the function.
+
+Many Python IDEs use the docstring to provide context-sensitive documentation
+
+Python looks in several places when you try to import a module. 
+Specifically, it looks in all the directories defined in sys.path. This is just a list, and you can easily view it or modify it with standard list methods.
+ 
+import sys                                                 
+print (sys.path)
+print (sys.path.insert(0, '/home/mark/diveintopython3/examples'))
+
+Python will look through these directories (in this order) for a .py file whose name matches what you’re trying to import.
+
+the truth is more complicated than that, because not all modules are stored as .py files. Some are built-in modules; 
+they are actually baked right into Python itself. Built-in modules behave just like regular modules, but their Python source code is not available, 
+because they are not written in Python! (Like Python itself, these built-in modules are written in C.)
+
+Python will look in that directory as well, whenever you try to import a module. The effect lasts as long as Python is running.
+
+By using sys.path.insert(0, new_path), you inserted a new directory as the first item of the sys.path list,  and therefore at
+the beginning of Python’s search path.-->>>this ensures that your modules will be found and used instead of the modules that came with Python.
+ 
+Python functions have attributes, and that those attributes are available at runtime. A function, like everything else in Python, is an object.
+
+import humansize 
+print(humansize.approximate_size(4096, True)) 
+
+Once you import a module, you can reference any of its public functions, classes, or attributes. Modules can do this to 
+access functionality in other modules, and you can do it in the Python interactive shell too. 
+This is an important concept, and you’ll see a lot more of it throughout this book
+
+When you want to use functions defined in imported modules, you need to include the module name. So you can’t just say approximate_size; 
+it must be humansize.approximate_size
+
+All functions have a built-in attribute __doc__, which returns the docstring
+The sys module is an object which has (among other things) an attribute called path.
+
+everything is an object in the sense that it can be assigned to a variable or passed as an argument to a function.
+
+Basically you can pass fns, entire modules, classes or individual instances of a class to functions 
+-- Hence these are all called “first-class object” in other programming contexts.
+
+******everything in Python is an object******
+Strings are objects. Lists are objects. Functions are objects. Classes are objects. Class instances are objects. Even modules are objects.
+
+Indenting code:
+Python functions have no explicit begin or end
+The only delimiter is a colon (:) and the indentation of the code itself.
+
+This means that whitespace is significant, and must be consistent.
+
+This raise statement will raise an exception (of type ValueError)
+
+Blank lines don't count as code block delimiters.
+
+One major benefit is that all Python programs look similar, since indentation is a language requirement and not a matter of style. 
+
+Python uses carriage returns to separate statements and a colon and indentation to separate code blocks
+
+if size < 0:
+raise ValueError('number must be non-negative')
+
+Exceptions:
+Unlike Java, Python functions don’t declare which exceptions they might raise. It’s up to you to determine what possible exceptions you need to catch.
+
+Python uses try…except blocks to handle exceptions, and the raise statement to generate them.
+
+In reality, exceptions are implemented as classes, and this raise statement is actually creating an instance of the ValueError class 
+and passing the string 'number must be non-negative' to its initialization method
+
+“up the stack.” If the exception is never handled, your program will crash, Python will print a “traceback” to standard error
+
+Catching Import Errors:
+One of Python’s built-in exceptions is ImportError, which is raised when you try to import a module and fail.
+Reason:module doesn’t exist in your import search path.
+
+try:
+  import chardet
+except ImportError:
+  chardet = None
+  
+try:
+    from lxml import etree
+except ImportError:
+    import xml.etree.ElementTree as etree
+
+since the module that did get imported is always called etree, the rest of your code doesn’t need to be littered with 
+if statements to call differently-named modules.
+
+Python lets you assign a variable without declaring.
+
+Python will not let you reference a variable that has never been assigned a value. 
+Trying to do so will raise a NameError exception
+
+Everything is Case-Sensitive in Python
+
+Running Scripts:
+
+from humansize import approximate_size
+if __name__ == '__main__':
+    print(approximate_size(1000000000000, False))
+    print(approximate_size(1000000000000))
+	
+what makes this if statement special? Well, modules are objects, and all modules have a built-in attribute __name__. 
+A module’s __name__ depends on how you’re using the module. 
+If you import the module, then __name__ is the module’s filename, without a directory path or file extension.
+
+import humansize
+print(humansize.__name__)
+#humansize
+print(__name__)
+#__main__
+
+You can also run the module directly as a standalone program, in which case __name__ will be a special default value, __main__
+
+PEP stands for Python Enhancement Proposals
+
+Native Datatypes:
+In Python, every value has a datatype, but you don’t need to declare the datatype of variables.
+Python figures out what type it is and keeps tracks of that internally.
+
+Python has many native datatypes
+Booleans ,Numbers ,Strings ,Bytes ,Lists ,Tuples ,Sets ,Dictionaries
+
+Of course, there are more types than these. Everything is an object in Python, 
+so there are types like module, function, class, method, file, and even compiled code. 
+
+Strings and bytes are important enough — and complicated enough :)
+
+Python expects an expression to evaluate to a boolean value. These places are called boolean contexts.
+You can use virtually any expression in a boolean context.
+
+Due to some legacy issues left over from Python 2, booleans can be treated as numbers
+Example:
+True is 1; False is 0.
+print (True + True)
+#2
+
+print (True - False)
+#1
+
+use the type() function to check the type of any value or variable
+use the isinstance() function to check whether a value or variable is of a given type.
+
+Coercing Integers To Floats And Vice-Versa
+print (float(2)) 
+print (int(2.0))
+
+Common Numerical Operations 
+print (11 / 2)
+print (11 // 2) -->5
+print (-11 // 2) -->-6
+
+Fractions
+import fractions
+x = fractions.Fraction(1, 3)
+
+Trigonometry
+import math
+print (math.pi ) 
+print (math.sin(math.pi / 2))-->>#1.0
+print (math.tan(math.pi / 4))-->>#0.99999999999999989
+
+Python does not have infinite precision. tan(π / 4) should return 1.0, not 0.99999999999999989.
+
+Numbers In A Boolean Context 
+Zero values are false, and non-zero values are true
+
+def is_it_true(anything):
+   if anything:
+     print("yes, it's true")
+   else:
+     print("no, it's false")
+	 
+print (is_it_true(1))
+#yes, it's true
+
+Lists:
+Lists are Python’s workhorse datatype.
+Analogy to List in Python is ArrayList class in Java.(which can hold arbitrary objects and can expand dynamically as new items are added)
+
+a_list = ['a', 'b', 'mpilgrim', 'z', 'example']
+print (a_list)
+
+A list is an ordered set of items.
+A list can be used like a zero-indexed array
+
+a_list[-1] --> check this out
+
+Slicing A List:
+: -->> Slice operator
+
+print (a_list[1:3] )
+
+Adding Items To A List:
+There are four ways to add items to a list.
+a_list = a_list + [2.0, 3] 
+a_list.append(True) -->>adds a single item to the end of the list
+a_list.extend(['four', '/']) -->> List is the argument here
+a_list.insert(0, '/') -->> Inserts at that index
+
+list can contain any number of items; there is no size limit (other than available memory). 
+However, if memory is a concern, you should be aware that list concatenation creates a second list in memory. 
+
+A list can contain items of any datatype, and the items in a single list don’t all need to be the same type
+
+Lists are implemented as classes. “Creating” a list is really instantiating a class. 
+As such, a list has methods that operate on it. 
+
+difference between append() and extend().
+
+Searching For Values In A List
+count() method returns the number of occurrences
+in operator
+print ('new' in a_list)
+#true
+
+index() method finds the first occurrence of a value in the list
+If not found , it raises ValueError: 'c' is not in list. In most of the other programming languages, it gives -1.
+But Remember, -1 is a valid list index. If the index() method returned -1, that could lead to some not-so-fun debugging sessions! :) :) :)
+
+Removing Items From A List
+Lists never have gaps - They expand or contract
+
+del a_list[1]
+If you don't know posiion use remove a_list.remove('new')
+
+Removing Items From A List: Bonus Round
+pop() -->removes the last item in the list and returns the value it removed.
+pop(1) -->Or you can remove arbitrary items too
+
+Lists In A Boolean Context
+Empty lists are false; all other lists are true.
+
+Tuple:
+A tuple is an immutable list
+You can slice a tuple (because that creates a new tuple),
+
+Tuples are faster than lists.
+makes your code safer if you “write-protect” data that doesn’t need to be changed. 
+It is like having an implied assert statement that shows this data is constant
+Some tuples can be used as dictionary keys
+
+Tuples can be converted into lists, and vice-versa.
+
+Tuples In A Boolean Context
+an empty tuple is false, else its true
+
+*****
+To create a tuple of one item, you need a comma after the value. 
+Without the comma, Python just assumes you have an extra pair of parentheses, which is harmless, but it doesn’t create a tuple.
+See below example
+*****
+
+print (type((False)))
+#<class 'bool'>
+
+print (type((False,)))
+#<class 'tuple'>
+
+Assigning Multiple Values At Once
+In Python, you can use a tuple to assign multiple values at once.
+
+v = ('a', 2, True)
+(x, y, z) = v 
+
+(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY) = range(7)
+print (SUNDAY)
+#6
+
+This has all kinds of uses. 
+Suppose you want to assign names to a range of values. You can use the built-in range() function with multi-variable assignment 
+to quickly assign consecutive values.
+Technically, the range() function returns an iterator, not a list or a tuple
+
+*V.V.Imp*
+You can also use multi-variable assignment to build functions that return multiple values, 
+simply by returning a tuple of all the values. The caller can treat it as a single tuple, 
+or it can assign the values to individual variables. Many standard Python libraries do this, 
+including the os module, which you’ll learn about in the next chapter.
+
+Sets:(uses curly braces)
+A set is an unordered “bag” of unique values. 
+Sets are actually implemented as classes
+You can also create a set out of a list.
+
+a_list = ['a', 'b', 'mpilgrim', True, False, 42]
+a_set = set(a_list) --->>this is not really calling a function, but instantiating a class . 
+For now think that set() acts like a function, and it returns a set.
+
+Don’t have any values yet? Not a problem. You can create an empty set.
+
+a_set = set()         
+print (a_set )
+#set() --->> The printed representation of an empty set looks a bit strange. Were you expecting {}.That would denote an empty dictionary, not an empty set.
+
+Due to historical quirks carried over from Python 2, you can not create an empty set with two curly brackets. 
+This actually creates an empty dictionary, not an empty set.
+
+Modifying A Set:
+add()
+update()
+
+Sets are bags of unique values. If you try to add a value that already exists in the set, it will do nothing. It won’t raise an error
+
+update() --> Its like add() each member given.
+
+Removing Items From A Set:
+discard()
+remove()
+
+Sutle difference: remove() gives a KeyError exception if that element is not there.
+
+pop() method--> since sets are unordered, there is no “last” value in a set. Its completely arbitrary
+clear() method removes all values from a set, leaving us an empty set
+pop() on an empty set will raise a KeyError exception.
+
+Common Set Operations:
+union()
+intersection()
+difference() -->> returns a new set containing all the elements that are in a_set but not b_set.
+symmetric_difference() -->> returns a new set containing all the elements that are in exactly one of the sets.
+
+Except difference() , the other 3 are symetric here.
+
+a_set = {1, 2, 3}
+b_set = {1, 2, 3, 4}
+print (a_set.issubset(b_set)) 
+
+If all the members of a_set are also members of b_set
+
+Sets In A Boolean Context:
+Same as lists
+
+Dictionaries:
+A dictionary is an unordered set of key-value pairs.
+When you add a key to a dictionary, you must also add a value for that key. (You can always change the value later.) 
+Python dictionaries are optimized for retrieving the value when you know the key, but not the other way around
+
+a_dict = {'server': 'db.diveintopython3.org', 'database': 'mysql'}        
+print (a_dict)
+#{'server': 'db.diveintopython3.org', 'database': 'mysql'}
+
+print (a_dict['server'] )                                                  
+#db.diveintopython3.org
+
+#KeyError: 'db.diveintopython3.org' incase you try to get a invalid key
+
+a_dict['database'] = 'blog' -->>> Adding key-value pairs to a dictionary
+
+use the pop method to remove a key-value pair.
+
+a_dict.pop('server')
+print (a_dict)
+
+Mixed-Value Dictionaries:
+SUFFIXES = {1000: ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+            1024: ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']}
+			
+Dictionaries In A Boolean Context:
+Empty dictionaries are false; all other dictionaries are true.
+
+None:
+None is a special constant in Python. It is a null value
+Its not equal to empty string, 0 or false.
+You can only compare None with None
+
+None is the only null value. It has its own datatype (NoneType). 
+You can assign None to any variable, but you can not create other NoneType objects.
+
+None In A Boolean Context:
+In a boolean context, None is false and not None is true.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

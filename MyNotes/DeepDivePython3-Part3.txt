@@ -1,0 +1,99 @@
+Packaging Python Libraries:
+Python 3 comes with a packaging framework called Distutils. 
+Distutils is many things: a build tool (for you), an installation tool (for your users), a package metadata format (for search engines), and more.
+
+It integrates with the Python Package Index (“PyPI”), a central repository for open source Python libraries.
+
+you’ve already seen several Distutils setup scripts in this book(for httplib2 and chardet example)
+
+you’ll step through the process of releasing your own Python software.
+
+Distutils tries to automate releasing your own Python software as much of it is possible,
+Choose a license:Don’t write your own license
+Classify your software using the PyPI classification system
+Write a “read me” file: What your software does(use Windows-style carriage returns.)
+
+Your Distutils setup script should be named setup.py
+
+for multi-file module Just put the httplib2 directory in the root directory, so you have an __init__.py file within an 
+httplib2/ directory within the httplib2/ root directory.
+
+in keeping with the convention for (L)GPL-licensed software, it has a separate file called COPYING.txt which contains the complete text of the LGPL.
+
+Writing Your Setup Script:
+
+The first line of every Distutils setup script is always the same:
+from distutils.core import setup
+
+This imports the setup() function, which is the main entry point into Distutils.
+The setup() function can take dozens of parameters.(Use named arguments only)
+
+Name of the arguments:
+name,version,author,author_email,url,description,long_description,classifiers
+
+from distutils.core import setup
+setup(
+    name = 'chardet',
+    packages = ['chardet'],
+    version = '1.0.2',
+    description = 'Universal encoding detector',
+    author='Mark Pilgrim',
+    #...
+)
+
+It has all of these required and recommended parameters, plus one I haven’t mentioned yet: packages.
+The packages parameter highlights an unfortunate vocabulary overlap in the distribution process.
+It refers to the fact that the chardet module is a multi-file module, sometimes known as… a “package.”
+The packages parameter tells Distutils to include the chardet/ directory, its __init__.py file, and all the other .py files that 
+constitute the chardet module. 
+
+Classifying Your Package:
+
+PyPI lets you browse packages by classifier
+Classifiers are not invisible metadata that you can just ignore!
+Classifiers are optional.(But its good to include them)
+
+Creating a Source Distribution:
+Distutils supports building multiple types of release packages.
+
+c:\Users\pilgrim\chardet> c:\python31\python.exe setup.py sdist
+Directory of c:\Users\pilgrim\chardet\dist will be created having the .zip file of the ditribution needed.
+
+c:\Users\pilgrim\chardet> c:\python31\python.exe setup.py bdist_wininst
+This will create a Graphical Windows Installer.(like chardet-1.0.2.win32.exe)
+
+Building Installable Packages for Other Operating Systems
+<Go thru this topic again.Its not clear>
+
+Adding Your Software to The Python Package Index
+
+Register yourself(@ https://pypi.org/)
+Register your software
+Upload the packages you created with setup.py sdist and setup.py bdist_*
+
+c:\Users\pilgrim\chardet> c:\python31\python.exe setup.py register sdist bdist_wininst upload
+
+Congratulations, you now have your own page on the Python Package Index! 
+The address is http://pypi.python.org/pypi/NAME, where NAME is the string you passed in the name parameter in your setup.py file.
+
+These frameworks focus on installation:
+Setuptools
+Pip
+Distribute
+
+These focus on testing and deployment:
+virtualenv
+zc.buildout
+Paver
+Fabric
+py2exe
+
+
+
+
+
+
+
+
+
+

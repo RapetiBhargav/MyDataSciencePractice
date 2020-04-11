@@ -1,0 +1,99 @@
+Classes and Iterators:
+
+class PapayaWhip:  
+    pass           
+	
+pass:move along, nothing to see here
+it’s a good placeholder when you’re stubbing out functions or classes.
+The pass statement in Python is like a empty set of curly braces ({}) in Java or C.
+
+C++ programmers may find it odd that Python classes don’t have explicit constructors and destructors. 
+Although it’s not required, Python classes can have something similar to a constructor: the __init__() method.
+*****The object has already been constructed by the time the __init__() method is called, *****
+and you already have a valid reference to the new instance of the class.
+
+The first argument of every class method, including the __init__() method, is always a reference to the current instance of the class. 
+By convention, this argument is named self.
+
+This argument fills the role of the reserved word 'this' in C++ or Java, but self is not a reserved word in Python, 
+merely a naming convention. (Nonetheless, please don’t call it anything but self; this is a very strong convention.)
+
+In all class methods, self refers to the instance whose method was called. But in the specific case of the __init__() method, 
+*****the instance whose method was called is also the newly created object.***** Although you need to specify self explicitly when 
+defining the method, you do not specify it when calling the method; Python will add it for you automatically.
+
+Instantiating Classes:
+
+import fibonacci2
+fib = fibonacci2.Fib(100) -->> To instantiate a class, simply call the class as if it were a function, passing the arguments 
+							   that the __init__() method requires. The return value will be the newly created object.
+
+print (fib.__class__)            
+#<class 'fibonacci2.Fib'>
+
+In Python, simply call a class as if it were a function to create a new instance of the class. 
+There is no explicit new operator like there is in C++ or Java.
+
+class Fib:
+    def __init__(self, max):
+        self.max = max 
+		
+	def __next__(self):
+		fib = self.a
+		if fib > self.max:   
+		pass #equal to do nothing
+		
+self.max is “global” to the instance
+That means that you can access it from other methods.
+
+A Fibonacci Iterator:
+An iterator is just a class that defines an __iter__() method.
+
+
+class Fib:                                        #①
+    def __init__(self, max):                      #②
+        self.max = max
+
+    def __iter__(self):                           #③
+        self.a = 0
+        self.b = 1
+        return self
+
+    def __next__(self):                           #④
+        fib = self.a
+        if fib > self.max:
+            raise StopIteration                   #⑤
+        self.a, self.b = self.b, self.a + self.b
+        return fib  
+
+The __iter__() method is called whenever someone calls iter(fib). (As you’ll see in a minute, a for loop will call this automatically, 
+but you can also call it yourself manually.) After performing beginning-of-iteration initialization (in this case, resetting self.a 
+and self.b, our two counters), the __iter__() method can return any object that implements a __next__() method. 
+In this case (and in most cases), __iter__() simply returns self, since this class implements its own __next__() method.
+
+The __next__() method is called whenever someone calls next() on an iterator of an instance of a class. 
+
+All three of these class methods, __init__, __iter__, and __next__, begin and end with a pair of underscore (_) characters. 
+The only thing “special” about special methods is that they aren’t called directly; Python calls them when you use some other syntax 
+on the class or an instance of the class. 
+
+To spit out the next value, an iterator’s __next__() method simply returns the value. 
+Do not use yield here; that’s a bit of syntactic sugar that only applies when you’re using generators. 
+Here you’re creating your own iterator from scratch; use return instead.
+
+for n in Fib(1000):
+     print(n, end=' ')
+
+The for loop calls Fib(1000) which returns an instance of the Fib class. Call this fib_inst.
+The for loop calls iter(fib_inst), which returns an iterator object. 
+Call this fib_iter. In this case, fib_iter == fib_inst, because the __iter__() method returns self, but the for loop doesn’t know (or care) about that.
+
+The next concepts seem blurry, lets come back after sometime to them.
+
+
+
+
+
+
+
+

@@ -1,0 +1,23 @@
+The importance of data visualization
+
+Matplotlib and Seaborn. 
+These are the tools we will focus on, 
+but there are many others including Bokeh, ggpy, and D3.
+
+Matplotlib is sort of the base plotting library in Python. Think of it as a low-level library that allows you to do all sorts of things
+
+Seaborn was created to help deal with some of these issues. It is built on top of Matplotlib and in its own words, 
+“provides a high-level interface for drawing attractive statistical graphics.”
+
+Types of plots:
+Scatter
+Bar
+Distribution
+Line
+Heat map
+Data aware
+
+https://chartio.com/learn/charts/what-is-a-scatter-plot/
+
+Check GIT committed code for understanding
+

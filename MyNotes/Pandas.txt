@@ -1,0 +1,103 @@
+Pandas is a very powerful and popular package built on top of NumPy.
+
+data wrangling — steps required to prepare the data so that it can actually be consumed for extracting insights and model building.
+
+=========>>>This might surprise you, but data preparation is what takes the longest in a data science project!<<<=========
+
+At the very basic level, Pandas objects can be thought of as enhanced versions of NumPy arrays in which the rows and 
+columns are identified with labels instead of simple integer indices.
+
+Has heterogeneous data types and even contain missing data.
+
+But why should we use Series when we have NumPy arrays?
+NumPy array have an implicitly defined integer index (to get and set values), the Pandas Series has an explicitly defined integer index, 
+which gives the Series object additional capabilities.
+
+Series From Dictionaries:
+Pandas’ Series look much like dictionaries in Python. 
+In fact, we can think of a Pandas Series like a specialization of a Python dictionary. 
+A dictionary is a structure that maps arbitrary keys to a set of arbitrary values, 
+and a Series is a structure that maps typed keys to a set of typed values. 
+This type information makes them more efficient compared to standard dictionaries.
+
+create a Series from a dictionary
+==================================
+fruits_dict = { 'apples': 10,
+                'oranges': 8,
+                'bananas': 3,
+                'strawberries': 20}
+
+fruits = pd.Series(fruits_dict)
+
+DataFrame Object
+================
+1. Constructing a DataFrame From a Series Object
+2. Constructing a DataFrame From a Dictionary
+3. Constructing a Dataframe by Importing Data From a File
+
+pd.read_csv("IMDB-Movie-Data.csv")
+Set titles as our index is by passing the column name as an additional parameter
+
+movies_df.head(10)
+movies_df.tail(3)
+
+Two different methods for getting this high-level view: info() and describe().
+
+info()
+Handling missing data is an important data preparation step in any data science project; 
+more often than not, we need to use machine learning algorithms and methods for data analysis that are not able to handle missing data themselves.
+Also if needed to convert the values for a column from string to float.
+
+describe()
+It computes summary statistics of integer/double variables and gives us some basic statistical details like percentiles, mean, and standard deviation
+
+Pandas DataFrame Operations - Dealing With Missing and Duplicates
+==================================================================
+movies_df_title_indexed.dropna()
+Returns a new DataFrame without altering the original one.*********inplace=True.**********
+
+drop only if the majority of data is missing. 
+This can be specified using the how or thresh parameters, which allow fine control of the number of nulls to allow in through the DataFrame.
+
+# Drop columns where all the values are missing
+df.dropna(axis='columns', how='all')
+
+# Thresh to specify a minimum number of non-null values 
+# for the row/column to be kept
+df.dropna(axis='rows', thresh=10)
+
+drop_duplicates() method
+
+Pandas DataFrame Operations - Pivot Tables and Functions
+========================================================
+
+Understand Pivot table using an example
+pivot tables are indeed a powerful tool for data analysis!
+
+apply() function
+Applying functions to a dataset, apply(), is very handy for playing with data and creating new variables. 
+
+# 1. Let's define the function to put movies into buckets based on their rating
+def rating_bucket(x):
+    if x >= 8.0:
+        return "great"
+    elif x >= 7.0:
+        return "good"
+    elif x >= 6.0:
+        return "average"
+    else:
+        return "bad"
+
+# 2. Let's apply the function    
+movies_df_title_indexed["Rating_Category"] = movies_df_title_indexed["Rating"].apply(rating_bucket)
+
+# 3. Let's see some results
+movies_df_title_indexed.head(10)[['Rating','Rating_Category']]
+
+
+
+
+
+
+
+

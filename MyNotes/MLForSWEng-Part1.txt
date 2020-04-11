@@ -1,0 +1,219 @@
+Deciding which type of learning method to use is only the first step towards creating a machine learning model. 
+You also need to choose the proper model architecture for your task and, most importantly, 
+be able to process data into a training pipeline and interpret/analyze model results.
+
+Machine learning is a subset of artificial intelligence and overlaps heavily with data science.
+Machine learning is one of the main techniques used to create artificial intelligence, but other non-ML techniques 
+(e.g. alpha-beta pruning, rule-based systems) are also widely used in AI.
+
+On the other hand, data science deals with gathering insights from datasets. Traditionally, data scientists have used statistical methods
+for gathering these insights. However, as machine learning continues to grow, it has also penetrated into the field of data science.
+
+Machine learning in industry has allowed us to create wonderful autonomous systems.
+
+Steps of the Machine Learning Process:
+Data Collection:
+The process of extracting raw datasets for the machine learning task.(variety of places:ranging from open-source online resources to paid crowdsourcing.)
+
+Data Processing and Preparation:
+Make sure that it is in a usable format for training a machine learning model. This includes handling missing data, dealing with outliers, etc.
+
+Feature Engineering:
+need to transform some of the features (and sometimes even drop some features) in order to optimize how well a model can be trained on the data.
+
+Model Selection:
+Rather than attempting to come up with a completely novel model architecture, most tasks can be thoroughly performed with an existing architecture 
+(or combination of model architectures).
+
+Model Training and Data Pipeline:
+you will create a data pipeline for training the model. This means creating a continuous stream of batched data observations to efficiently train the model. 
+Since training can take a long time, you want your data pipeline to be as efficient as possible.
+
+Model Validation:
+After training the model,validate the model’s performance on a held-out portion of the overall dataset.
+
+Model Persistence:
+After training and validating the model’s performance, you need to be able to properly save the model weights and possibly push the model to production.
+
+Data Manipulation with Numpy:
+==============================
+
+A. Data Processing
+"We don't have better algorithms than anyone else; we just have more data."
+Data processing-->The act of converting raw data into a meaningful form
+On the other hand, given a large and diverse set of training data, a good deep learning model will significantly outperform non-deep learning algorithms.
+Baseball data used in sabermetrics- MoneyBall movie
+
+B. NumPy
+Many scenarios involve mostly numeric datasets.
+Furthermore, the majority of neural networks use input data that is either numeric or has been converted to a numeric form.
+
+NumPy Arrays:
+===============
+NumPy arrays are basically just Python lists with added features.
+arr = np.array([-1, 2, 5], dtype=np.float32)
+convert a Python list to a Numpy array
+The dtype keyword argument takes in a NumPy type and manually casts the array to the specified type.
+
+arr = np.array([[0, 1, 2], [3, 4, 5]],  --->> Create a 2D matrix
+               dtype=np.float32)
+			   
+d = arr.copy()
+			   
+print('Array a: {}'.format(repr(d)))
+
+When the elements of a NumPy array are mixed types, then the array's type will be upcast to the highest level type
+Similar to Python lists, when we make a reference to a NumPy array it doesn't create a different array. 
+We get around this by using an array's inherent copy function. 
+ 
+C. Casting
+We cast NumPy arrays through their inherent astype function.
+coin_flips = np.random.randint(2, size=data.shape)  ---> Creates array of 0's and 1's
+bool_coin_flips = coin_flips.astype(np.bool)
+
+To specify the number of elements in the returned array, rather than the step size, we can use the np.linspace function.
+
+arr = np.array([np.nan, 1, 2])
+np.array([np.nan, 1, 2], dtype=np.int32)--->>np.nan cannot take on an integer type.
+
+arr = np.array([np.inf, 5])
+np.array([np.inf, 3], dtype=np.int32)--->>np.inf cannot take on an integer type.
+
+NumPy Basics:
+==============
+arr = np.arange(-1.5, 4, 2)
+
+arr = np.linspace(5, 11, num=4, dtype=np.int32,endpoint=False) --->>To specify the number of elements in the returned array, 
+																	rather than the step size, we can use the np.linspace function.
+																	
+arr = np.arange(7)  --> will have 8 elements
+reshaped_arr = np.reshape(arr, (2, 4))
+reshaped_arr = np.reshape(arr, (-1, 2, 2)) -->>We are allowed to use the special value of -1 in at most one dimension of the new shape. 
+											   The dimension with -1 will take on the value necessary to allow the new shape to contain 
+											   all the elements of the array.
+
+arr = np.arange(8)
+arr = np.reshape(arr, (2, 4)) --->> NumPy provides an inherent function for flattening an array. 
+
+transposed = np.transpose(arr, axes=(1, 2, 0)) --->> Default axes value is [2, 1, 0]
+
+arr = np.ones((2, 3), dtype=np.int32)
+arr = np.zeros((2, 3), dtype=np.int32)
+
+Math:
+======
+Performing arithmetic on NumPy arrays does not change the original array, and instead produces a new array that is the result of the arithmetic operation
+
+Non-linear functions -- np.exp,np.exp2, np.log, np.log2, and np.log10
+Mathematical Constants -- np.e and np.pi
+
+print(repr(np.power(3, arr)))--> Raise 3 to power of each number in arr
+
+np.matmul(arr1, arr2) --> Incorrect dimensions will result in a ValueError
+
+Random:
+========
+random_arr = np.random.randint(-3, high=14,
+                               size=(2, 2))
+							   
+Utility functions:
+Some fundamental utility functions from the np.random module are np.random.seed and np.random.shuffle
+
+The outputs of the random functions in each subsequent run are identical when we set the same random seed.
+
+# New seed
+np.random.seed(2)
+print(np.random.randint(10))
+
+# Original seed
+np.random.seed(1)
+print(np.random.randint(10))
+
+Distributions:
+---------------
+We can draw samples from Probability distribution
+Uniform Distribution: print(repr(np.random.uniform(low=-3.4, high=5.9,size=(2, 2))))
+Normal  Distribution: print(repr(np.random.normal(loc=-2.4, scale=4.0,size=(2, 2))))--->loc and scale are Mean and Std Deviation
+
+Custom Sampling:
+np.random.choice(colors, size=(2, 2),p=[0.8, 0.19, 0.01])
+
+Indexing:
+---------
+arr = np.array([[6, 3], [0, 2]])
+arr[0]
+Slicing: arr[0:1, 0:-1]
+
+np.argmin and np.argmax  ---> Gives indexes of max and min element
+arr = np.array([[-2, -1, -3],
+                [4, 5, -6],
+                [-3, 9, 1]])
+print(np.argmin(arr[0]))
+print(np.argmax(arr[2]))
+print(np.argmin(arr))  --> Gives 5 , which is the index in the flattened version of arr.
+
+print(repr(np.argmax(arr, axis=-1))) --> to search for max along a dimension
+
+Filtering:
+===========
+print(repr(arr != 1))
+# Negated from the previous step
+print(repr(~(arr != 1)))
+
+print(repr(np.isnan(arr)))
+
+Gives us
+array([[False, False,  True],
+       [False,  True, False],
+       [ True, False, False]])
+	   
+Each boolean array in our examples represents the location of elements we want to filter for. 
+The way we perform the filtering itself is through the np.where function.
+
+x_ind, y_ind = np.where(arr != 0) ---> Gives x and y values
+
+*****Important******
+np_filter = np.array([[True, False], [False, True]])
+positives = np.array([[1, 2], [3, 4]])
+negatives = np.array([[-2, -5], [-1, -8]])
+print(repr(np.where(np_filter, positives, negatives)))
+
+np_filter = positives > 2
+print(repr(np.where(np_filter, positives, negatives)))  
+
+print(repr(np.where(np_filter, positives, -1)))---> Broadcasting
+
+Axis-wise filtering:
+np.any and np.all
+
+Statistics:
+===========
+arr.min(axis=0)
+arr.max(axis=0)
+
+np.mean(arr)
+np.var(arr)
+np.median(arr)
+
+np.median applied without axis takes the median of the flattened array.
+
+Explore for more comprehensive list of statistical functions (e.g. calculating percentiles, creating histograms, etc.)
+
+Aggregation:
+============
+np.sum(arr, axis=0)
+np.cumsum(arr, axis=0)
+np.concatenate([arr1, arr2], axis=1)
+
+Saving Data:
+============
+np.save('arr.npy', arr)
+np.save will append the ".npy" extension to it.
+
+load_arr = np.load('arr.npy') --> .npy extn is needed here
+
+
+							 
+
+
+

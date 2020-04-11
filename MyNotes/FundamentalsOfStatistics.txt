@@ -1,0 +1,136 @@
+Basic statistics from a data science perspective.
+
+Having this kind of understanding is important because we can then choose and apply data science techniques that are the best fit for that shape of data.
+
+Mean, mode, median, standard deviation, and correlation coefficient
+
+Correlation Is Not Causation!
+
+Statistical Features - Working With Box Plots:
+===============================================
+Percentile
+let’s learn to interpret statistical features from plots.
+
+Matplotlib’s boxplot()
+Five-Number Summary #
+Minimum value
+Lower quartile (Q1/25th Percentile)
+Median value (Q2/50th Percentile)
+Upper quartile (Q3/75th Percentile)
+Maximum value
+The five-number summary is a useful measure of spread in the dataset.
+
+Remember to make use of them while doing a preliminary investigation of a large dataset, when comparing two or more datasets, 
+and when you need a descriptive analysis including data skewedness or outliers of your data.
+
+Basics of Probability:
+=======================
+How Does Probability Fit in Data Science? #
+Understanding the methods and models needed for data science, like logistic regression which we will encounter in the Machine Learning section, 
+randomization in A/B testing, or experimental design, and sampling of data are examples of use-cases that require a good understanding of probability.
+
+a. Independent Events
+What is the probability of getting three 6s if we have 3 dice?
+P(X and Y) = P(X) * P(Y)
+
+b. Dependent Events
+What is the probability of choosing two red cards in a deck of cards?
+P(X and Y) = P(X) * P(Y after X has occurred)
+
+c. Mutually Exclusive Events
+P(X or Y) = P(X) + P(Y)
+P(X and Y) = 0
+
+d. Inclusive Events
+P(X or Y) = P(X) + P(Y) − P(X and Y)
+
+Conditional Probability:
+Conditional probability is a measure of the probability of an event given that another event has occurred.
+
+P(X and Y) = P(Y|X)*P(X)
+
+A very important, and extensively used, derivation from conditional probability is the famous Bayes Theorem.
+
+Bayesian Statistics:
+====================
+
+P(X|Y)=P(Y|X)P(X)/P(Y)
+
+What we have learned so far about probability falls into the category of Frequency Statistics. 
+But there is another more powerful form of statistics as well, and it called Bayesian Statistics, or Bayesian Inference
+
+it describes the probability of an event based on the previous knowledge of the conditions that might be related to the event. 
+It allows us to answer questions like:
+
+Has this happened before?
+Is it likely, based on my knowledge of the situation, that it will happen?
+
+Spam filtering based on a blacklist would be too restrictive and it would have a high false-positive rate, spam that goes undetected. 
+Bayesian filtering can help by allowing the spam filter to learn from previous instances of spam. 
+As we analyze the words in a message, we can compute its probability of being spam using Bayes’ Theorem. 
+And as the filter gets trained with more and more messages, it updates the probabilities that certain words lead to spam messages. 
+Bayesian Statistics takes into account previous evidence
+
+basically a way of finding a probability when we know certain other probabilities.
+
+Probability Distributions - An Introduction:
+============================================
+if we have some missing values in our dataset, we can understand the distribution of our data using probability distributions 
+and then replace missing values with the most likely values.
+
+Probability Mass Function
+Probability Density Function
+
+Types of Distributions - Uniform, Bernoulli, and Binomial
+=========================================================
+The important thing is to be able to identify distributions from their graphs and to know their major properties and/or distinguishing features. 
+For example, say you plot the distribution of an interesting variable in your dataset; you should be able to tell what kind of distribution that 
+variable is following — is it Normal or Poisson or something else?
+
+Uniform Distribution
+
+The probabilities of success and failure do not need to be equally likely in Bernoulli distribution
+Bernoulli distribution allowed us to represent experiments that have two outcomes but only a single trail. 
+What if we have multiple trials? -->>Binomial Distribution
+
+Types of Distributions - Normal
+===============================
+The number of standard deviations from the mean is also called the standard score or z-score. 
+Z-scores are a way to compare results from a test to a “normal” population.
+
+**VV.Imp**
+This process of transforming a distribution to one with a mean of 0 and a standard deviation of 1 is called standardizing the distribution. 
+Standardizing can help us make decisions about our data more easily.
+
+Types of Distributions - Poisson and Exponential
+================================================
+Poisson Distribution:-->>Has Mass distribution
+This distribution gives us the probability of a given number of events happening in a fixed interval of time.
+
+Poisson distributions can be used to make forecasts about the number of customers or sales on certain days or seasons of the year.
+
+X, Poisson Random Variable, is the number of events in a time interval and P(X) is its probability distribution (probability mass function).
+
+Exponential Distribution:-->>Has Density distribution
+Exponential distribution allows us to go a step further from the Poisson distribution.
+Say we are using Poisson to model the number of accidents in a given time period. 
+What if we wanted to understand the time interval between the accidents?
+It allows us to model the time in between each accident.
+
+Some other examples of questions that can be answered by modeling waiting times:
+How much time will go by before a major earthquake hits a certain area?
+How long will a car component last before it needs replacement?
+
+We can observe that the greater the rate of events, the faster the curve drops, and the lower the rate, the flatter the curve
+
+Statistical Significance:
+=========================
+Statistical significance is a measure of whether our findings are meaningful or just a result of random chance.
+
+Statistical significance can be broken down into three base components:
+
+Hypothesis Testing
+Normal Distribution
+P-values
+
+*****Interesting portion in Educative. Read it entirely.*****

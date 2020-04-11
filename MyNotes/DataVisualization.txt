@@ -1,0 +1,28 @@
+Python offers multiple graphing libraries that come packed with lots of different features. 
+Matplotlib is the most popular library for creating visualizations in an easy way, 
+so we are going to use it as a basis for learning the art of data visualization.
+
+import matplotlib.pyplot as plt
+
+Available Styles:
+-----------------
+# Examples of available styles
+plt.style.use('classic')
+plt.style.use('ggplot') --->> ggplot is something similar to feel in R language 
+plt.style.use('seaborn-whitegrid')
+plt.style.use(['dark_background', 'presentation'])
+
+Displaying Plots
+----------------
+If you are using Matplotlib from within a script, the function plt.show() is the way to go.
+
+If you are working with a Jupyter notebook, plotting interactively within the notebook can be done with the %matplotlib command:
+
+%matplotlib notebook will create interactive plots embedded within the notebook.
+%matplotlib inline will create static images of your plots embedded in the notebook.
+
+Saving Figures to File
+----------------------
+fig.savefig('figure.png')
+
+

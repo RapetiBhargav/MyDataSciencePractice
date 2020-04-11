@@ -1,0 +1,152 @@
+A Simple Model:construct a simple model with loss functions.
+
+Theta vs J(Theta) --->> This is called an error curve or error surface
+
+Gradient descent is normally categorized into three types:
+
+Batch Gradient Descent(slow for large dataset)
+Stochastic Gradient Descent(random samples)
+Mini-batch Gradient Descent(mix of first 2, on every iteration, random samples)
+
+
+R-squared also known as coefficient of determination is a statistical measure that tells us the strength of the 
+relationship between a model and the dependent (predicted) variable. 
+
+R Squared---Also known as the goodness of fit of a model.
+
+A value of 1 means 100% variation of the target variable can be explained by the model.
+
+we can interpret the importance of independent variables to the target variable by their weights.
+
+Takeaway:
+========
+We cannot rely on a single metric to evaluate the performance of our model. 
+Being better in one metric does not mean we will get good values for other metrics. 
+However, if a model is poor in one metric such as losses, then we can disregard the model.
+
+In Logistic Regression: The cost function used instead of mean squared error is the cross-entropy function.
+
+Classification report # ---> Gives Precision, Recall, F-Score and Support
+A classification report is a table that calculates different metrics to evaluate our model. 
+We can obtain the table using the function classification_report in sklearn.metrics
+
+F1-score: 
+It is the harmonic mean of precision and recall. 
+The best score is 1.0, whereas the worst score is 0.0.
+
+Support #
+Support is the number of instances predicted in each class.
+
+The accuracy is 77%. Precision is on the lower side. Also, the F1-score is on the lower side, as well. 
+A reason could be imbalanced classes. In our dataset, there are more negative examples than positive ones. 
+This affects the outcome of the model, as well.
+
+Correlated independent variables affect the performance of linear regression models. 
+This problem is also known as multi collinearity in statistics.
+
+Pruning: When we remove sub-nodes of a decision node, this process is called pruning. It is the opposite process of splitting.
+
+Random Forest:
+--------------
+The idea behind random forests is that a large number of uncorrelated decision trees working individually will 
+perform better as a committee than any individual tree.
+
+i.e: the predictions made by individual trees need to have a low correlation.
+
+There are two important words in the above statement.
+1.Uncorrelated trees
+2.Performing as a committee
+
+A.Uncorrelated trees
+To ensure that the outcomes of the individual decision trees are uncorrelated, random forests use two techniques:
+1.Bagging
+2.Feature randomness
+
+Bagging #
+Note that we do not train individual trees on random subsets of the data, 
+rather they are trained on the whole data set where each training example is randomly sampled with replacement.
+This technique of using random samples with replacement is known as bagging.
+
+Feature randomness #
+In random forests, individual trees can only select from a subset of features. 
+This introduces more variability among the trees. Therefore, the trees made have low correlation amongst themselves.
+
+B.Performing as a committee
+In the end, a random forest model chooses the class which had the most votes from individual decision trees.
+
+from sklearn.ensemble import RandomForestClassifier
+forest = RandomForestClassifier(n_estimators = 20)  -->> 20 decision trees
+forest.fit(X_train,Y_train)
+
+By default, Random Forest uses 10 individual decision trees.
+
+Support Vector Machines
+=======================
+SVMs can be used for both classification and regression problems.
+Plot each data item as a point in n-dimensional space
+Then, we perform classification by finding the hyper-plane/line that differentiates the two classes. 
+A hyper-plane is the higher dimensional version of a line. As a line can separate classes on two-dimensional data, 
+a hyper-plane can separate on higher dimensions.
+
+Kernels:
+Sometimes we cannot separate data easily by a line or a hyperplane.
+Therefore, SVMs are found by converting data into higher dimensions and finding hyper-planes on the higher dimensional data. 
+This is known as the kernel trick.
+
+Kernel:
+Simply put, they do some extremely complex data transformations, 
+then find out the process to separate the data based on the labels or outputs we have defined.
+
+sklearn.svm module--->>This module has many different SVMs based on different kernels
+SVC -->> Support Vector Classification
+from sklearn.svm import SVC
+
+Ensembles:Bagging and Boosting
+==============================
+How to use boosting and bagging machine learning algorithms in Python.
+
+Ensemble is a collection of different predictive models that collectively decide the predicted output.
+
+Ensemble methods are divided into two categories:
+Bagging
+Boosting
+
+Note that we do not train individual trees on random subsets of the data, 
+rather they are trained on the whole data set where each training example is randomly sampled with replacement.
+This technique of using random samples with replacement is known as bagging.
+In Bagging, the result is obtained by averaging the responses of the N models or majority vote.
+
+Boosting:
+the sampling is not random, rather it is weighted.
+different samples have different chances of being chosen(contrast from Bagging, where each sample has equal change)
+
+In Boosting algorithms, each model is trained on data, considering the previous model’s success. 
+After each training step, the weights are redistributed. Misclassified data increases its weights to emphasize the most difficult examples. 
+In this way, subsequent models will focus on them during their training.
+
+Once all of the models give their output, the second stage is to decide the final output. the final output is again based on weights.
+Boosting assigns a second set of weights, this time for the N models, in order to take a weighted average of their predictions. 
+
+In the Boosting training stage, the algorithm allocates weights to each resulting model. 
+A model with good classification results on the training data will be assigned a higher weight than a model that performs poorly.
+
+Two common boosting algorithms are:
+1.Gradient Boosting(Entropy Loss) - More flexible
+2.AdaBoost(Exponential Loss)
+These differ in their loss functions.
+
+Whereas Gradient Boosting is more flexible as it uses the entropy loss(like logistic regression).
+AdaBoost can be considered a special case of Gradient Boosting with exponential loss.
+
+from sklearn.ensemble import BaggingClassifier
+bag_model = BaggingClassifier(n_estimators = 30)
+bag_model.fit(X_train,Y_train)
+
+from sklearn.ensemble import AdaBoostClassifier
+model = AdaBoostClassifier(n_estimators = 30)
+model.fit(X_train,Y_train)
+
+from sklearn.ensemble import GradientBoostingClassifier
+model = GradientBoostingClassifier(n_estimators = 30)
+model.fit(X_train,Y_train)
+

@@ -1,0 +1,85 @@
+Closures and Generators:
+Let’s design a Python library that automatically pluralizes English nouns
+
+elif re.search('[^aeioudgkprt]h$', noun):
+	return re.sub('$', 'es', noun)
+ 
+square brackets mean “match exactly one of these characters.”
+
+re.sub() function performs regular expression-based string substitutions.
+
+A List Of Functions:
+
+The “rules” variable is a sequence of pairs of functions.
+
+def build_match_and_apply_functions(pattern, search, replace):
+    def matches_rule(word):                                     
+        return re.search(pattern, word)
+    def apply_rule(word):                                       
+        return re.sub(search, replace, word)
+    return (matches_rule, apply_rule)  
+
+This technique of using the values of outside parameters within a dynamic function is called closures. 
+****build_match_and_apply_functions() is a function that builds other functions dynamically.****
+
+A File Of Patterns
+
+rules = []
+with open('plural4-rules.txt', encoding='utf-8') as pattern_file:  -->>The with statement creates what’s called a context, 
+    for line in pattern_file:                                          when the with block ends, Python will automatically close the file
+        pattern, search, replace = line.split(None, 3)             -->>          
+        rules.append(build_match_and_apply_functions(              
+                pattern, search, replace))
+
+split(None, 3):	
+split on any whitespace (tabs or spaces, it makes no difference)
+split on whitespace 3 times, then leave the rest of the line alone
+
+Generators:
+The presence of the yield keyword in make_counter means that this is not a normal function. 
+It is a special kind of function which generates values one at a time. You can think of it as a resumable function. 
+Calling it will return a generator(a generator object) that can be used to generate successive values of x.
+
+To create an instance of the make_counter generator, just call it like any other function. Note that this does not actually execute the function code.
+-->>Ponder over this
+
+The next() function takes a generator object and returns its next value. The first time you call next() with the counter generator, 
+it executes the code in make_counter() up to the first yield statement, then returns the value that was yielded.
+
+“yield” pauses a function. “next()” resumes where it left off.
+
+def fib(max):
+    a, b = 0, 1          
+    while a < max:
+        yield a          
+        a, b = b, a + b  
+
+for n in fib(1000):      
+    print(n, end=' ')    
+
+#0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987
+
+VV.Imp
+You can use a generator like fib() in a for loop directly. The for loop will automatically call the next() function to get values from the fib() generator
+
+print (list(fib(1000)))  
+#[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987]
+
+print (list(fib(1000)))
+This is a useful idiom: pass a generator to the list() function, and it will iterate through the entire generator
+
+
+def rules(rules_filename):
+    with open(rules_filename, encoding='utf-8') as pattern_file:
+        for line in pattern_file:
+            pattern, search, replace = line.split(None, 3)                   
+            yield build_match_and_apply_functions(pattern, search, replace)  
+
+def plural(noun, rules_filename='plural5-rules.txt'):
+    for matches_rule, apply_rule in rules(rules_filename):                   
+        if matches_rule(noun):
+            return apply_rule(noun)
+    raise ValueError('no matching rule for {0}'.format(noun))
+
+rules() is a generator that spits out match and apply functions on demand.
+Since rules() is a generator, you can use it directly in a for loop.

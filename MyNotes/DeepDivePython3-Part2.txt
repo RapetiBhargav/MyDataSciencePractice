@@ -1,0 +1,212 @@
+Comprehensions:
+This chapter will teach you about list comprehensions, dictionary comprehensions, and set comprehensions: 
+three related concepts centered around one very powerful technique
+
+But first, I want to take a little detour into two modules that will help you navigate your local file system.
+
+Working With Files And Directories
+Python 3 comes with a module called os
+os module-->to manipulate or to get info from — local directories, files, processes, and environment variables.
+
+1.Import one of the modules in the examples folder
+2.Call a function in that module
+3.Explain the result
+
+1.Add the examples folder to the import search path
+2.Change the current working directory to the examples folder
+
+import os, sys
+os.getcwd()                                           
+#/C:\Python31
+os.chdir('/Users/pilgrim/diveintopython3/examples')   
+os.getcwd()
+
+Working With Filenames and Directory Names
+os.path contains functions for manipulating filenames and directory names.
+
+os.path.join() function constructs a pathname out of one or more partial pathnames.Simply concatenates.
+os.path.expanduser() function will expand a pathname that uses ~ to represent the current user’s home directory. 
+This works on any platform where users have a home directory,
+Combining these 2 techniques, you can easily construct pathnames for directories and files in the user’s home directory.
+
+addSlashIfNecessary() ---->> Not needed now. Stupid function
+
+import os
+pathname = '/Users/pilgrim/diveintopython3/examples/humansize.py'
+print (os.path.split(pathname) )                                    
+#('/Users/pilgrim/diveintopython3/examples', 'humansize.py')
+
+(dirname, filename) = os.path.split(pathname)                         
+print(dirname)                                                      
+#/Users/pilgrim/diveintopython3/examples
+
+(shortname, extension) = os.path.splitext(filename)            
+print (shortname)
+#humansize
+
+print (extension)
+#.py
+
+Example of :: multi-variable assignment to return multiple values from a function
+
+Listing Directories:
+The glob module uses shell-like wildcards.
+
+import os
+os.chdir('/Users/pilgrim/diveintopython3/')
+import glob
+
+glob.glob('examples/*.xml')
+
+Getting File Metadata:
+import os
+print(os.getcwd())                         
+#/usercode
+
+metadata = os.stat('feed.xml')         
+print (metadata.st_mtime)
+
+os.stat() function
+
+Constructing Absolute Pathnames:
+os.path.realpath() function
+Or you can also use
+print ([os.path.realpath(f) for f in glob.glob('*.xml')])
+
+List Comprehensions:
+A list comprehension provides a compact way of mapping a list into another list by applying a function to each of the elements of the list.
+
+a_list = [1, 9, 8, 4]
+print ([elem * 2 for elem in a_list] ) 
+Here a_list is not changes.Follow below command for that
+a_list = [elem * 2 for elem in a_list]
+print (a_list)
+
+You can use any Python expression in a list comprehension.
+
+print ([os.path.realpath(f) for f in glob.glob('*.xml')])
+print ([f for f in glob.glob('*.py') if os.stat(f).st_size < 6000]) --->>To filter a list, you can include an if clause at the end of the list comprehension.
+
+There’s no limit to how complex a list comprehension can be.
+print ([(os.stat(f).st_size, os.path.realpath(f)) for f in glob.glob('*.xml')] )
+print ([(humansize.approximate_size(os.stat(f).st_size), f) for f in glob.glob('*.xml')])
+
+Dictionary Comprehensions:
+A dictionary comprehension is like a list comprehension, but it constructs a dictionary instead of a list.
+
+metadata = [(f, os.stat(f)) for f in glob.glob('*test*.py')]    --->>This is not a dictionary comprehension; it’s a list comprehension.
+                                                                     Constructs a tuple.Each item of the resulting list is a tuple
+
+metadata_dict = {f:os.stat(f) for f in glob.glob('*test*.py')}  --->>Dictionary Comprehensions
+
+metadata_dict = {f:os.stat(f) for f in glob.glob('*')}                               
+humansize_dict = {os.path.splitext(f)[0]:humansize.approximate_size(meta.st_size)  --->> Added IF clause here  
+                   for f, meta in metadata_dict.items() if meta.st_size > 6000} 
+
+Other Fun Stuff To Do With Dictionary Comprehensions:
+Swapping the keys and values of a dictionary.
+
+print ({value:key for key, value in a_dict.items()})
+Of course, this only works if the values of the dictionary are immutable, like strings or tuples
+
+Set Comprehensions:
+a_set = set(range(10))
+print ({x for x in a_set if x % 2 == 0})
+
+Useful Resources:
+https://pymotw.com/3/
+
+Strings:
+Every piece of text you’ve ever seen on a computer screen is actually stored in a particular character encoding
+So you can think of the character encoding as a kind of decryption key
+Everything you thought you knew about strings is wrong, and there ain’t no such thing as “plain text.”
+
+Unicode:
+Unicode is a system designed to represent every character from every language. 
+
+Unicode represents each letter, character, or ideograph as a 4-byte number. 
+Each number represents a unique character used in at least one of the world’s languages. 
+(Not all the numbers are used, but more than 65535 of them are, so 2 bytes wouldn’t be sufficient.)
+
+There is a Unicode encoding that uses four bytes per character. 
+It’s called UTF-32, because 32 bits = 4 bytes.
+1 byte = 8 bits
+
+This has some advantages, the most important being that you can find the Nth character of a string in constant time, 
+because the Nth character starts at the 4×Nth byte. 
+It also has several disadvantages, the most obvious being that it takes four freaking bytes to store every freaking character.
+
+UTF-16 encodes every character from 0–65535 as two bytes, then uses some dirty hacks if you 
+actually need to represent the rarely-used “astral plane” Unicode characters beyond 65535.
+
+UTF-16 is twice as space-efficient as UTF-32
+
+But there are also non-obvious disadvantages to both UTF-32 and UTF-16. Different computer systems store individual bytes in different ways.
+
+A document encoded in UTF-8 uses the exact same stream of bytes on any computer.
+UTF-8 is a variable-length encoding system for Unicode.
+
+Diving In:
+In Python 3, all strings are sequences of Unicode characters. 
+There is no such thing as a Python string encoded in UTF-8, or a Python string encoded as CP-1252. 
+“Is this string UTF-8?” is an invalid question.
+
+Python 3 supports formatting values into strings
+print ("{0}'s password is {1}".format(username, password))
+
+You can have as many positional indices as you have arguments, and you can have as many arguments as you want. 
+But replacement fields are much more powerful than that.
+
+print (si_suffixes)
+#['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+print ('1000{0[0]} = 1{0[1]}'.format(si_suffixes))
+
+What this example shows is that format specifiers can access items and properties of data structures using (almost) Python syntax. 
+This is called compound field names. The following compound field names “just work”:
+
+Passing a list, and accessing an item of the list by index (as in the previous example)
+Passing a dictionary, and accessing a value of the dictionary by key
+Passing a module, and accessing its variables and functions by name
+Passing a class instance, and accessing its properties and methods by name
+Any combination of the above
+
+import humansize
+import sys
+print ('1MB = 1000{0.modules[humansize].SUFFIXES[1000][0]}'.format(sys))
+
+This evaluates to sys.modules['humansize'].SUFFIXES[1000][0].
+
+Format Specifiers:
+print ('{0:.1f} {1}'.format(698.24, 'GB'))
+#698.2 GB
+
+Other Common String Methods:
+print(s.splitlines()) -->>returns a list of strings,
+print(s.lower())
+print(s.lower().count('f')) -->> gives no. of occurrences of string f
+
+query = 'user=pilgrim&database=master&password=PapayaWhip'
+a_list = query.split('&') 
+#['user=pilgrim', 'database=master', 'password=PapayaWhip']
+
+query = 'user=issac=pilgrim=golconda&database=master&password=PapayaWhip'
+a_list = query.split('&')                                        
+print (a_list)
+
+a_list_of_lists = [v.split('=', 3) for v in a_list if '=' in v]
+print (a_list_of_lists)
+
+v.split('=', 3) --->> Split by 3
+v.split('=') --->> Just split for '='
+
+This example is similar to parsing URLs
+If you’re dealing with url query parameters, you’re better off using the urllib.parse.parse_qs() function, which handles some non-obvious edge cases.
+
+Slicing A String
+
+Strings vs. Bytes:
+An immutable sequence of Unicode characters is called a string. An immutable sequence of numbers-between-0-and-255 is called a bytes object.
+
+Postscript: Character Encoding Of Python Source Code:
+By default python 3 uses UTF-8 encoding.

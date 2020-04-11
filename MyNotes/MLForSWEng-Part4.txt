@@ -1,0 +1,58 @@
+Data Modeling with scikit-learn:
+================================
+models for linear regression and classifying data. 
+how to perform hyperparameter tuning and model evaluation through cross-validation.
+
+We'll talk more about hyperparameter tuning, the process of finding the optimal hyperparameter settings
+
+Data scientists tend to work with smaller datasets than machine learning engineers, 
+so they can quickly extract good results using statistical models.
+
+The scikit-learn library provides many statistical models for linear regression.
+
+Basic linear regression
+------------------------
+The simplest form of linear regression is called least squares regression.
+This strategy produces a regression model--->>minimizes the sum of squared residuals between the model's predictions 
+											  and actual values for the dependent variable.
+
+OLS- Ordinary Least square
+
+Ridge Regression
+----------------
+Learn about regularization in linear regression
+Learn about hyperparameter tuning using cross-validation
+Implement a cross-validated ridge regression model in scikit-learn
+
+OLS regression is a good way to fit a linear model onto a dataset, it relies on the fact that the dataset's features are each independent, i.e. uncorrelated.
+
+If features are linearly correlated,  it makes the OLS regression model highly sensitive to noise in the data.
+
+linearly correlated features in the dataset-->>we combat this by performing regularization
+
+For regularization, the goal is to not only minimize the sum of squared residuals, but to do this with coefficients 
+as small as possible. The smaller the coefficients, the less susceptible they are to random noise in the data. 
+The most commonly used form of regularization is ridge regularization.
+
+example of ordinary least squares regression models vs. ridge regression models.
+
+The ordinary least squares regression is much more susceptible to being influenced by the added noise, 
+as there is a much larger degree of variance in the grey regression lines compared to the ridge regression.
+
+
+# predefined dataset
+print('Data shape: {}\n'.format(data.shape))
+print('Labels shape: {}\n'.format(labels.shape))
+
+from sklearn import linear_model
+alphas = [0.1, 0.2, 0.3]
+reg = linear_model.LassoCV(alphas)
+reg.fit(data, labels)
+print('Coefficients: {}\n'.format(repr(reg.coef_)))
+print('Intercept: {}\n'.format(reg.intercept_))
+print('R2: {}\n'.format(reg.score(data, labels)))
+print('Alpha: {}\n'.format(reg.alpha))
+
+This is not running!!!
+
+	

@@ -1,0 +1,34 @@
+import sys; sys.executable
+
+inputs = tf.placeholder(tf.float32, shape=(None, input_size), name='inputs')
+labels = tf.placeholder(tf.int32, shape=(None, output_size), name='labels')
+
+When building the computation graph of our model, tf.placeholder acts as a "placeholder" for the input data and labels. 
+Without the tf.placeholder, we would not be able to train our model on real input data.
+
+shape=(None, input_size)-->> When we use None in the shape tuple, we are allowing that dimension to take on any size.
+
+In TensorFlow, this type of fully-connected neuron layer is implemented using tf.layers.dense, 
+which takes in a neuron layer and output size as required arguments, 
+and adds a fully-connected output layer with the given size to the computation graph.
+
+logits = tf.layers.dense(inputs, output_size,name='logits') --->> this actually outputs a Tensor of shape (None, self.output_size)
+
+our model outputs logits based on the input data. These logits represent real number mappings from probabilities.-->> Use sigmoid to map it to Original Probabilities
+
+probs = tf.nn.sigmoid(logits)
+
+rounded_probs = tf.round(probs)
+
+The problem with rounded_probs is that it's still type tf.float32, which doesn't match the type of the labels placeholder. 
+This is an issue, since we need the types to match to compare the two. We can fix this problem using tf.cast.
+predictions = tf.cast(rounded_probs, tf.int32)
+
+is_correct = tf.equal(predictions, labels)
+
+is_correct_float = tf.cast(is_correct, tf.float32)
+accuracy = tf.reduce_mean(is_correct_float)
+
+
+
+

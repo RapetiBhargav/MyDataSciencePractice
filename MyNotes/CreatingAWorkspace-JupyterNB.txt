@@ -1,0 +1,76 @@
+The Jupyter Notebook is an incredibly powerful and sleek tool for developing and presenting data science projects. 
+It can integrate code and its output into a single document, combining visualizations, narrative text, mathematical equations, 
+and other rich media. It’s simply awesome.
+
+Note: There are other ways of running the Jupyter Notebook as well, e.g., via pip and Docker, but we are going to keep it sweet and simple. 
+We will stick with the most hassle-free approach.
+
+Python Libraries:
+Numpy
+this library contains basic linear algebra functions, Fourier transforms, and advanced random number capabilities. 
+It can also be used to load data to Python and export from it.
+
+Pandas
+It is a powerful tool for data wrangling, a process required to prepare your data so that it can actually be consumed for analysis and model building. 
+Pandas contains a large variety of functions for data import, export, indexing, and data manipulation. 
+
+Scikit Learn
+It comes with a variety of efficient tools for machine learning and statistical modeling: 
+it provides classification models (e.g., Support Vector Machines, Random Forests, Decision Trees), 
+Regression Analysis (e.g., Linear Regression, Ridge Regression, Logistic Regression), 
+Clustering methods (e.g, k-means), 
+data reduction methods (e.g., Principal Component Analysis, feature selection), 
+model tuning, 
+and selection with features like grid search, cross-validation. 
+It also allows for pre-processing of data
+
+Matplotlib
+For data visualization
+
+Seaborn
+Seaborn is another great library for creating attractive and information rich graphics. 
+Its goal is to make data exploration and understanding easier, and it does it very well. 
+Seaborn is based on Matplotlib which is its child, basically.
+
+Q.) When I can use Python’s built-in lists and to do all sorts of computations and manipulations through list comprehensions, 
+for-loops, etc., why should I bother with NumPy arrays?
+Answer:Numpy is more efficient in storage and data operations as the arrays grow larger in size.
+
+A key difference between an array and a list is that arrays allow you to perform vectorized operations 
+while a list is not designed to handle vector operations. A vector operation means a function gets applied to every item in the array.
+Example:print(arr1 * arr1)
+
+Some other key differences between Python built-in lists and NumPy arrays are:
+
+Array size cannot be changed after creation, you will have to create a new array or overwrite the existing one to change size.
+Unlike lists, all items in the array must be of the same dtype.
+An equivalent NumPy array occupies much less space than a Python list of lists.
+
+negative step value in slicing--->> Results in reversing the array
+
+what if you are required to combine arrays of different dimensions, e.g., a 2D array with a 1D array? 
+In such cases, np.concatenate might not be the best option to use. 
+Instead, you can use np.vstack (vertical stack) or np.hstack(horizontal stack) to finish the task.
+
+Likewise hsplit and vsplit for horizontal and vertical splitting
+
+universal functions (ufuncs)-->>operate on nD-arrays in an element-by-element fashion(i.e vectorized operations)
+
+Native arithmentic operators
+print("x + 5 =", x + 5)
+
+Or use explicit functions, ufuncs, e.g. "add" instead of "+"
+print(np.add(x, 5))
+
+Universal Function Methods:
+ufuncs provide some methods that take two input parameters and return one output parameter.
+np.add.reduce(x)
+np.add.accumulate(x)
+
+# Boolean array
+print(x < 6)
+
+# Boolean mask
+print(x[x < 6])
+
+

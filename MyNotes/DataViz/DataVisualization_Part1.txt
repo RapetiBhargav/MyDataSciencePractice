@@ -1,0 +1,150 @@
+Analytics-->> is the process of taking raw data and extracting actionable insights.
+
+Perhaps, you wish to discover the average market return by year 
+or 
+identify any stocks with outlier performances
+
+Analytics process into four distinct steps:
+Processing the data
+Describing the data
+Cleaning the data
+Visualizing the data
+
+from collections import Counter
+marriage_ages = [22, 22, 25, 25, 30, 24, 26, 24, 35]  # create a list
+value_counts = Counter(marriage_ages)  # apply the counter functionality
+print(value_counts.most_common())
+
+********Functions can also be anonymous using lambda keyword.********
+y = lambda x, y: x + y  # an anonymous function which takes x and y and input and returns x+y
+print(y(100,5))  # call the function
+
+very useful when you want to assume a default value and don’t want to use the get() functionality
+from collections import defaultdict  # import defaultdict class
+my_default_dict = defaultdict(int)   # make a default dictionary
+my_default_dict['age'] = 22          # adding a key-value pair
+print(my_default_dict['company'])    # printing the value of the key "company"
+
+When talking about lists, it is useful to discuss generators. 
+Generators are objects you can loop over like a list, but they are lazy. 
+It means they don’t have to store the entire list in memory. 
+Instead they return the next value in the list only when asked, making them very memory efficient. 
+Because of this property, you can have a function that generates an infinite list; 
+it never stores the value in memory but just keeps track of the last value returned and 
+returns that value + 1 when asked for another value.
+
+You can contain your iterable in the enumerate() command to add a counter to your loop. 
+This is useful if you want to loop over a list of values while still having access to the iterable index.
+
+names = ['tyler', 'karen', 'jill']   # list containing names
+
+for i, name in enumerate(names):     # iterating over names
+    print("Index: {0}".format(i))    # printing index number
+    print("Value: {0}".format(name)) # print the value at the index
+	
+The zip function
+-----------------
+1.Combining two lists into a list of tuples
+2.Breaking a tuple into two lists
+
+--------------------First---------------------------------
+list_1 = [1, 2, 3]  # create your first list
+list_2 = ['x', 'y', 'z']  # create your second list
+print(list(zip(list_1, list_2)))  #combine and print
+
+The zip actually returns a generator, so we have to wrap it in list() to print it. 
+This would not be necessary if you wanted to loop over it though, because generators are iterable.
+--------------------First---------------------------------
+
+--------------------Second---------------------------------
+pairs = [('x', 1), ('y', 2), ('z', 3)]  # a list of tuples
+letters, numbers = zip(*pairs)  # break into two lists
+
+print(letters)  # print the first values of the tuples
+print(numbers)  # print the second values of the tuples
+--------------------Second---------------------------------
+
+dot_product = np.dot(np_array, np_array)
+
+Sampling the data:
+------------------
+The choice() function allows you to pass an array, specify how many values to sample, 
+and decide whether sampling should be done with or without replacement. 
+Sampling without replacement means the same value can’t be sampled more than once.
+
+import numpy as np
+array = np.array([1,2,3,4,5])
+
+# Sample 10 data points with replacement. 
+print("--0--")
+print(np.random.choice(array, 10, replace=True))
+
+# Sample 3 data points without replacement. 
+print("--1--")
+print(np.random.choice(array, 3, replace=False))
+
+Scipy an External Library:
+---------------------------
+scipy provides support to handle statistics and probabilistic functionalities.
+
+Calculating correlations:
+=========================
+Scipy-Python library for scientific computing
+
+Scipy+Numpy are basis for Pandas
+
+A correlation is a numerical measure of the statistical relationship between two variables. 
+For us, those variables will usually be two columns of data, for example, the temperature outside and the likelihood of rain.
+
+One way to calculate the correlation between two vectors of data is with Pearson’s r-value. 
+[-1,1]
+
+Note: these are all linear correlations.
+
+from scipy import stats
+import numpy as np
+
+array_1 = np.array([1,2,3,4,5,6])  
+array_2 = array_1  
+print(stats.pearsonr(array_1, array_2))
+
+Result:(1.0, 0.0)
+1st value is correlation
+2nd value is p-value
+
+Normal distribution:
+-----------------------
+from scipy import stats
+x = stats.norm.rvs(loc=0, scale=10, size=10)  # Generate 10 values randomly sampled from a normal distribution with mean 0 and standard deviation of 10
+print(x)
+
+This function will give you the relative likelihood that you would sample a particular value.
+
+PDF:
+----
+from scipy import stats
+p1 = stats.norm.pdf(x=-100, loc=0, scale=10)  # Get probability of sampling a value of -100
+p2 = stats.norm.pdf(x=0, loc=0, scale=10)     # Get probability of sampling a value of 0
+
+print(p1)
+print(p2)
+
+----------I was expecting to get p2 value 0----------
+
+CDF:
+----
+from scipy import stats
+p1 = stats.norm.cdf(x=0, loc=0, scale=10)  # Get probability of sampling a value less than or equal to 0
+print(p1)
+
+Calculating descriptive statistics:
+-----------------------------------
+from scipy import stats
+
+print(stats.describe(stats.norm.rvs(loc=0, scale=1, size=500)))  
+# Calculate descriptive statistics for 500 data points sampled from normal distribution with mean 0 and standard deviation of 1
+
+The skewness is a measure of the asymmetry of the distribution. 
+The kurtosis is a measure of the “tailedness” of the distribution. 
+A large value usually means there are more outliers.
+

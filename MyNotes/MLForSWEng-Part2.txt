@@ -1,0 +1,274 @@
+Data Analysis with pandas:
+==========================
+Excellent tool for processing and analyzing real world data, with utilities ranging from parsing multiple file formats 
+to converting an entire data table into a NumPy matrix array.
+
+Matplotlib and pyplot
+creating charts and plots to visualize the data
+
+The library we will use for data visualization in Python is Matplotlib. Specifically, we'll be using the pyplot API of Matplotlib, 
+which provides a variety of plotting tools from simple line plots to advanced visuals like heatmaps and 3-D plots.
+
+basic necessities for our data analysis (e.g. line plots, boxplots, etc.)
+
+Series:
+Learn about the pandas Series object for 1-D data.
+
+For 1-D data, we use the pandas.Series objects, which we'll refer to simply as a Series.
+A Series is created through the pd.Series constructor, which takes in no required arguments but does have a variety of keyword arguments.
+
+ser = pd.Series([[1, 2], [3, 4]])
+
+Since Series objects are 1-D, the ser variable represents a Series with lists as elements, rather than a 2-D matrix.
+
+0    1
+1    2
+2    3
+dtype: int64
+
+These integers are collectively referred to as the index of a Series, and each individual index element is referred to as a label.
+
+series = pd.Series([1, 2, 3], index=['a', 8, 0.3]) -->> Custom index
+
+Another way to set the index of a Series is by using a Python dictionary for the data argument
+series = pd.Series({'a':1, 'b':2, 'c':3})
+
+DataFrame
+Learn about the pandas DataFrame object for 2-D data.
+While a Series could be constructed from a scalar (representing a single value Series), a DataFrame cannot.
+
+pd.DataFrame takes in an additional columns keyword argument, which represents the labels for the columns (similar to how index represents the row labels)
+
+df = pd.DataFrame([[5, 6], [1, 3]],
+                  index=['r1', 'r2'],
+                  columns=['c1', 'c2'])
+
+df = pd.DataFrame({'c1': [1, 2], 'c2': [3, 4]},
+                  index=['r1', 'r2'])
+				  
+upcast = pd.DataFrame([[5, 6], [1.2, 3]])
+print('{}\n'.format(upcast))
+# Datatypes of each column
+print(upcast.dtypes) --->> You could see here that Upcast only works for the first Column and not rows
+
+Appending rows:
+The required argument for the function is either a Series or DataFrame, representing the row(s) we append.
+Note that the append function returns the modified DataFrame but doesn't actually change the original. 
+
+df_app = df.append(ser)
+df_app = df.append(ser, ignore_index=True) -->> appending a series to a dataframe
+df_app = df.append(df2)
+
+Dropping data:
+df = pd.DataFrame({'c1': [1, 2], 'c2': [3, 4],
+                   'c3': [5, 6]},
+                  index=['r1', 'r2'])
+
+# Drop columns c1, c3
+df_drop = df.drop(labels=['c1', 'c3'], axis=1)
+
+# Drop row r1
+df_drop = df.drop(labels='r1')
+
+Similar to append, the drop function returns the modified DataFrame but doesn't actually change the original.
+**Note that when using labels and axis, we can't drop both rows and columns from the DataFrame.**
+
+Combining:
+Combine multiple DataFrames through concatenation and merging.
+
+append function for concatenating DataFrame rows
+concat function for concatenating DataFrame rows and columns
+
+The final call to pd.concat resulted in a DataFrame with many NaN values. This is because the row labels for df1 and df3 did not match, 
+so result was padded with NaN in locations where values did not exist.
+ 
+Indexing
+Understand how DataFrame values can be accessed via indexing
+1.Direct Indexing
+When indexing into a DataFrame, we can treat the DataFrame as a dictionary of Series objects, where each column represents a Series. 
+Each column label then becomes a key, allowing us to directly retrieve columns using dictionary-like bracket notation
+
+col1 = df['c1'] --> returns Series
+col1_df = df[['c1']] --> returns DF
+col23 = df[['c2', 'c3']] --> returns DF
+
+We can also use direct indexing to retrieve a subset of the rows (as a DataFrame). 
+**However, we can only retrieve rows based on slices, rather than specifying particular rows.**
+
+first_two_rows = df[0:2]
+
+last_two_rows = df['r2':'r3']
+
+# Results in KeyError
+df['r1']  ------>>> V.Imp. This is because the DataFrame treated 'r1' as a column label.
+
+Integer indexing for the rows-->> the end index was exclusive
+When we use row labels--> the end index is inclusive
+
+2.Other Indexing
+loc and iloc properties for indexing.
+
+use iloc to access rows based on their integer index
+use loc to access rows based on row labels
+
+df.iloc[[0, 2]]
+df.iloc[bool_list]
+
+with loc we can perform column indexing along with row indexing, and set new values in a DataFrame for specific rows and columns
+
+df.loc['r2']--> returns Series
+
+bool_list = [False, True, True]   --->> False means does'nt index the first row here
+df.loc[bool_list]
+
+df.loc['r1', 'c2'] ---> Returns a single value
+df.loc[['r1', 'r3'], 'c2'] -->> Get rows and columns
+
+File I/O:
+=========
+Read from and write to different types of files in pandas
+
+pd.read_csv returns a DataFrame with integer indexes as row labels, and each comma-separated column name as the column labels.
+when we set the index_col keyword argument, we specify which column we want to use as the row labels.
+In our example, we used the first and second column as row labels
+
+df = pd.read_csv('data.csv')
+pd.read_csv('data.csv', index_col=0)
+
+df=pd.read_excel('data.xlsx', sheet_name='MIL')
+df_dict = pd.read_excel('data.xlsx', sheet_name=[0, 1]) -->> sheets 0 and 1.**Returns back a dictionary**we obtain an ordered dictionary of spreadsheets
+df_dict.keys()
+
+JSON:
+=====
+JSON data is pretty similar to a Python dictionary. 
+In fact, you can use the json module (part of the Python standard library) to convert between dictionaries and JSON data. 
+
+df1 = pd.read_json('data.json')---->>treats each outer key of the JSON data as a column label and each inner key as a row label
+df2 = pd.read_json('data.json', orient='index')---->>the outer keys are treated as row labels and the inner keys are treated as column labels.
+
+Writing data:
+================
+mlb_df.to_csv('data.csv')
+mlb_df.to_csv('data.csv', index=False) --->> If row labels are not meaningful , skip index
+
+if we want to write multiple spreadsheets in an Excel workbook, we first load the Excel file into a pd.ExcelWriter 
+then use the ExcelWriter as the first argument to to_excel.
+
+with pd.ExcelWriter('data.xlsx') as writer:
+  mlb_df1.to_excel(writer, index=False, sheet_name='NYY')
+  mlb_df2.to_excel(writer, index=False, sheet_name='BOS')
+  
+df.to_json('data.json', orient='index') ---> Usage of Index is same
+
+Grouping:
+Write code to retrieve home run statistics through DataFrame grouping
+
+perform dataset grouping with the groupby function
+
+groups = df.groupby('yearID')
+for name, group in groups:
+  print('Year: {}'.format(name))
+  print('{}\n'.format(group))
+  
+groups.get_group(2016)
+groups.sum()
+groups.mean()
+
+no2015 = groups.filter(lambda x: x.name > 2015) --->>> ***Check this again***
+
+Multiple columns Grouping:
+------------------------------
+groups = player_df.groupby(['yearID', 'teamID'])
+
+for name, group in groups:
+  print('Year, Team: {}'.format(name))  --->>> we grouped the MLB data by both year and team, resulting in each group's name being a tuple of year and team.
+  print('{}\n'.format(group))
+
+Features
+Learn about the different feature types that can be part of a dataset.
+Understand the difference between quantitative and categorical features
+Learn methods to manipulate features and add them to a DataFrame
+Write code to add MLB statistics to a DataFrame
+
+The axis argument specifies whether to aggregate over rows (axis=0, the default), or columns (axis=1)
+When we used no argument, default axis=0 in the sum and mean functions
+
+In contrast with sum and mean, the default axis for multiply is the columns axis.(axis=1)
+Hence here we need to explicitly set axis=0
+
+Given 2*3 matrix
+df_ms = df.multiply([1000, 1], axis=0) --->>apply on each row
+df_w = df_ms.multiply([1,0.5,1]) --->>apply on each column
+
+Filtering
+Filter DataFrames for values that fit certain conditions
+
+cruzne02 = df['playerID'] == 'cruzne02'  ---> Returns True or False
+
+str_f1 = df['playerID'].str.startswith('c')
+str_f2 = df['teamID'].str.endswith('S')
+str_f3 = ~df['playerID'].str.contains('o') --->> Has negation
+
+isin_f1 = df['playerID'].isin(['cruzne02',     ----->>check for values in a specific set
+                               'ortizda01'])
+
+isna = df['teamID'].isna()   ----->> To check for NaN values
+notna = df['teamID'].notna() 
+
+str_df = df[df['teamID'].str.startswith('B')] --->> Returns values after satisfying the condition
+hr40_df = df[df['HR'] > 40]
+
+Sorting:
+sort2 = df.sort_values('playerID', ascending=False)
+sort2 = df.sort_values(['yearID', 'HR'],
+                       ascending=[True, False])
+					   
+Metrics
+Use pandas to obtain statistical metrics for data.
+
+To exclude yearID , use below
+hr_rbi = df[['HR','RBI']]
+metrics2 = hr_rbi.describe()
+
+metrics3 = hr_rbi.describe(percentiles=[.2,.8])
+50th percentile, i.e. the median, is always returned
+The values specified in the percentiles list will replace the default 25th and 75th percentiles.
+
+p_ids.value_counts()               --->>frequency counts for each category in a column feature
+p_ids.value_counts(normalize=True) --->>returns the frequency proportions, rather than counts
+
+y_ids = df['yearID']
+y_ids.unique()   ---->> Returns an array object
+
+Plotting
+Learn how to plot DataFrames using the pyplot API from Matplotlib.
+
+df.plot()
+df.plot(kind='hist')
+df.plot(kind='box')
+plt.title('HR vs. Year')
+plt.xlabel('Year')
+plt.ylabel('HR Count')
+plt.show()
+
+We can also plot multiple features on the same graph.
+
+To NumPy
+Understand how DataFrames can be converted to 2-D NumPy arrays.
+
+The DataFrame object is great for storing a dataset and performing data analysis in Python. 
+However, most machine learning frameworks (e.g. TensorFlow), work directly with NumPy data. 
+Furthermore, the NumPy data used as input to machine learning models must solely contain quantitative values.
+
+So even the categorical features of a DataFrame, such as gender and birthplace, must be converted to quantitative values
+===>>Indicator Features
+
+Converting to indicators --->>get_dummies function
+
+converted = pd.get_dummies(df)
+
+Once you have converted to indicators , We can then convert to a NumPy matrix using the values function.
+n_matrix = df.values
+
+***Check how the dataframe looks prior and after it gets converted into a 2-D array in numpy***

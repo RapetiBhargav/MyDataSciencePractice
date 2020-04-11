@@ -1,0 +1,150 @@
+Data Preprocessing with scikit-learn:
+=====================================
+An overview of industry data science and the scikit-learn API.
+
+The main task for machine learning engineers is to first analyze the data for viable trends, 
+then create an efficient input pipeline for training a model. This process involves using libraries like NumPy and pandas 
+for handling data, along with machine learning frameworks like TensorFlow for creating the model and input pipeline. 
+
+Data scientists tend to work on smaller datasets than machine learning engineers, and their main goal is to analyze 
+the data and quickly extract usable results. Therefore, they focus more on traditional data inference models (found in scikit-learn),
+rather than deep neural networks.
+ 
+The scikit-learn library includes tools for data preprocessing and data mining.
+
+Standardizing Data
+Learn about data standardization and implement it with scikit-learn.
+
+When data can take on any range of values, it makes it difficult to interpret. 
+Therefore, data scientists will convert the data into a standard format to make it easier to understand. 
+The standard format refers to data that has 0 mean and unit variance (i.e. standard deviation = 1),
+and the process of converting data into this format is called data standardization.
+
+z = ​x−μ/σ
+
+​from sklearn.preprocessing import scale
+col_standardized = scale(pizza_data)
+
+This way, we can see how many standard deviations a particular observation's feature value is from the mean.
+
+If for some reason we need to standardize the data across rows, rather than columns, we can set the axis keyword 
+argument in the scale function to 1. 
+An example of this would be analyzing a particular student's test scores in terms of standard deviations from that student's average test score.
+
+Data Range
+----------
+Create a function to compress data into a specific range of values.
+
+compressing data into the range [0, 1]. 
+This allows us to view the data in terms of proportions, or percentages, based on the minimum and maximum values in the data.
+
+x_prop = x - d_min/d_max - d_min
+​this only works if not all the data values are the same (i.e. dmax ≠ dmin).
+
+x_scale = x_prop.(r_max - r_min) + r_min
+
+Range compression in scikit-learn:
+-----------------------------------
+transformer modules.
+1.scale --> for data standardization(discussed prev.)
+2.MinMaxScaler--->compress data values to a specified range
+
+custom_scaler = MinMaxScaler(feature_range=(-2, 3))
+transformed = custom_scaler.fit_transform(data)
+
+Fit and transform functions used seperately:
+default_scaler = MinMaxScaler() 
+default_scaler.fit(data)  ---------->>>***** different data value fit*****
+transformed = default_scaler.transform(new_data) -->>Range [0, 1] default
+
+Robust Scaling:
+---------------
+Understand how outliers can affect data and implement robust scaling.
+
+We can robustly scale the data, i.e. avoid being affected by outliers, by using the data's median and Interquartile Range (IQR).
+
+Since the median and IQR are percentile measurements of the data (50% for median, 25% to 75% for the IQR), 
+they are not affected by outliers. 
+
+For the scaling method, we just subtract the median from each data value then scale to the IQR.
+
+x_prop = x - median
+x_scale = x_prop.(r_25 - r_75) + r_25
+
+Robust scaling with scikit-learn
+--------------------------------
+In scikit-learn, we perform robust scaling with the RobustScaler module
+The function will apply outlier-independent scaling to the input NumPy array
+
+from sklearn.preprocessing import RobustScaler
+robust_scaler = RobustScaler()
+transformed = robust_scaler.fit_transform(data)
+
+Normalizing Data
+----------------
+Learn about data normalization and implement a normalization function.
+Learn how to apply L2 normalization to data
+
+For instance, when clustering data we need to apply L2 normalization to each row, in order to calculate cosine similarity scores.
+
+from sklearn.preprocessing import Normalizer
+normalizer = Normalizer()
+transformed = normalizer.fit_transform(data)
+
+Data Imputation
+---------------
+Learn about data imputation and the various methods to accomplish it.
+
+In scikit-learn, the SimpleImputer transformer performs four different data imputation methods.
+
+The four methods are:
+Using the mean value
+Using the median value
+Using the most frequent value
+Filling in missing values with a constant
+
+missing data-->>nan
+
+imp_constant = SimpleImputer(strategy='mean/median/most_frequent/constant',fill_value=-1) -->> checks nan and replaces with -1
+transformed = imp_constant.fit_transform(data)
+
+Other imputation methods
+------------------------
+There are also more advanced imputation methods such as k-Nearest Neighbors (filling in missing values based on similarity scores from the kNN algorithm) 
+and MICE (applying multiple chained imputations, assuming the missing values are randomly distributed across observations).
+
+MICE-- Multiple imputations by chained equations
+
+PCA
+----
+Learn about PCA and why it's useful for data preprocessing.
+
+PCA extracts the principal components of the dataset, which are an uncorrelated set of latent variables 
+that encompass most of the information from the original dataset. 
+
+Using a smaller set of principal components can make it a lot easier to use the dataset in statistical or 
+machine learning models (especially when the original dataset contains many correlated features).
+
+PCA in scikit-learn
+-------------------
+Like every other data transformation, we can apply PCA to a dataset in scikit-learn with a transformer
+
+from sklearn.decomposition import PCA
+pca_obj = PCA() # The value of n_component will be 4. As m is 5 and default is always m-1
+pca_obj = PCA(n_components=3)
+pc = pca_obj.fit_transform(data).round(3)
+
+Observation from the example
+-----------------------------
+**********the final column (last principal component) is all 0's..
+This means that there are actually only a maximum of three uncorrelated principal components that can be extracted.*************
+
+Labeled Data
+---------------
+Learn about labeled datasets
+Separate the PCA components of a dataset by class label.
+
+-->> Seen how to use PCA
+-->> How to seperate PCA data as per labels(In the coding exercise)
+-->> Plotted a scatter plot between 2 PCA components and their labels(different colors)
+     Incredibly useful for visualizing the components

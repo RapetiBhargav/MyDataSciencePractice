@@ -1,0 +1,194 @@
+Reading , Describing and Cleaning data:
+========================================
+
+Reading Data:
+-------------
+names = ['age', 'workclass', 'fnlwgt', 'education', 'educationnum', 'maritalstatus', 'occupation', 'relationship', 'race',
+        'sex', 'capitalgain', 'capitalloss', 'hoursperweek', 'nativecountry', 'label']
+# Read in the CSV file from the webpage using the defined column names
+df = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data",
+                      header=None, names=names)
+					  
+header=None since it needs to read first line as data
+
+Reading JSON:
+------------
+When your JSON data are in a string, you can use the loads() function to read it into a Python dictionary
+
+import json
+json_data = json.loads(json_string)
+print(json_data)
+
+When your JSON data is a file, you read the data using the load() function
+
+with open('data.json') as f:
+    data = json.load(f)
+	
+Reading Raw Files:
+------------------
+import tempfile
+
+tmp = tempfile.NamedTemporaryFile()
+
+# Open the file for writing. And write the data.
+with open(tmp.name, 'w') as f:
+    f.write("James|22|M\n")
+    f.write("Sarah|31|F\n")
+    f.write("Mindy|25|F")
+
+# Read in the data from our file, line by line
+with open(tmp.name, "r") as f:
+    for line in f:
+      print(line)
+	  
+Extracting values from file into a list:
+
+first_values = []  # Define a list to store the first values of each row
+with open(tmp.name, "r") as f:  # Open the file to read
+    for line in f:  # Loop over each line
+      row_values = line.split("|")  # Split each line by the | character into a list
+      first_values.append(row_values[0])  # Add the first value to our list
+
+
+Describing Data:
+----------------
+
+train_df.describe()
+train_df.info()
+
+to_numeric()
+to_datetime()
+to_string()
+df['numeric_column'] = pd.to_numeric(df['string_column'])
+
+print(train_df['relationship'].unique()) -->> find unique values
+print(train_df['relationship'].value_counts())--->>Get counts of unique values
+
+Normalize gives use in %'s
+print(train_df.groupby('relationship')['label'].value_counts(normalize=True))
+# Group by relationship and then get the value counts of label with normalization 
+
+print(train_df.groupby(['workclass'])['hoursperweek'].mean())
+print(train_df.describe(percentiles=[.01,.05,.95,.99]))
+
+Correlation:
+---------------
+train_df['label_int'] = train_df.label.apply(lambda x: ">" in x)
+print(train_df.corr())
+
+label is categorical, so correlation doesn’t really apply, our groupby frequencies are probably a better method.
+keep in mind, these are just univariate correlations (between one variable) and don’t account for multi-variate effects (between multiple variables).
+
+We have seen correlation in Scipy also, this gives an additional P-value.
+
+Reshaping the Data:
+-------------------
+possible ways to reshape and arrange the data using Pandas
+
+Pivot Table:
+===========
+we can pivot our data using pandas pivot_table functionality.
+
+print(pd.pivot_table(train_df, values='hoursperweek', index=['relationship','workclass'], 
+               columns=['label'], aggfunc=np.mean).round(2))
+
+values-->column being used for aggregation
+index -->index values that creates multiple rows
+columns --> the value on which you want to have multiple columns created.
+
+Cross Tab
+---------
+Get the frequency of all the pair-wise combinations of those two variables.
+# Calculate the frequencies between label and relationship
+print(pd.crosstab(train_df['label'], train_df.relationship))
+
+# Crosstab with normalized outputs
+print(pd.crosstab(train_df['label'], train_df.relationship, normalize=True))
+
+Reshape:
+--------
+import pandas.util.testing as tm; tm.N = 3
+import numpy as np
+import pandas as pd 
+
+def unpivot(frame):
+    N, K = frame.shape
+    data = {'value' : frame.values.ravel('F'),
+            'variable' : np.asarray(frame.columns).repeat(N),
+            'date' : np.tile(np.asarray(frame.index), K)}
+    return pd.DataFrame(data, columns=['date', 'variable', 'value'])
+	
+df = unpivot(tm.makeTimeDataFrame())
+print(df)
+
+**********************This concept is time taking, take a look at it again*******************************
+
+Cleaning the data:
+==================
+
+Missing data:
+-------------
+pd_series = pd_series.fillna(pd_series.mean())
+Use a model
+K-Nearest Neighbors
+pd_series = pd_series.dropna()
+print(pd_series.isnull())-->T/F on which ones are missing
+
+https://www.linkedin.com/pulse/imputing-missing-data-playing-fire-jehan-gonsal/
+
+Outliers
+--------
+Methods to detect Outliers:
+1. Box plot
+2. Standard deviation
+
+These methods look at the feature by itself, sometimes your outliers are multi-variate, a weight by itself might not be an outlier, but for a given height.
+
+https://www.kdnuggets.com/2017/01/3-methods-deal-outliers.html
+
+bbox = train_df['hoursperweek'].plot(kind="box")
+Here, anything outside the “whiskers” could be considered an outlier. 
+
+Whiskers=1.5 times the interquartile range=1.5 times[the distance between the 25th and 75th percentiles.]
+
+q_df = train_df.quantile([.25, .75])
+q_df.loc['iqr'] = q_df.loc[0.75] - q_df.loc[0.25]
+q_df.loc['whisker_length'] = 1.5 * q_df.loc['iqr']
+q_df.loc['max_whisker'] = q_df.loc['whisker_length'] + q_df.loc[0.75]
+q_df.loc['min_whisker'] = q_df.loc[0.25] - q_df.loc['whisker_length']
+q_df
+
+Removal of an outlier:
+----------------------
+Try to discover how these bad values came to be and fix them. It could be that your data pipeline broke, but the raw data is still good.
+
+Scaling:
+========
+Standard Scaling
+Min/Max scaling
+
+Categorical:
+============
+Label encoding
+One-hot encoding a.k.a. dummy variables.
+
+Label encoding
+Cast the column using the astype() function and pass the type of category
+
+non_categorical_series = pd.Series(['male', 'female', 'male', 'female'])
+# Convert the text series to a categorical series
+categorical_series = non_categorical_series.astype('category')
+# Print the numeric codes for each value
+print(categorical_series.cat.codes)
+# Print the category names
+print(categorical_series.cat.categories)
+
+.cat.codes --> get the integer values
+.cat.categories --> Get the string values
+
+One-hot encoding
+----------------
+pd.get_dummies(non_categorical_series)
+
+
+
