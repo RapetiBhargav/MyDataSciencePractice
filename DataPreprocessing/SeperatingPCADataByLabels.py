@@ -19,7 +19,9 @@ def separate_data(component_data, labels,
 def get_label_info(component_data, labels,
                    class_label, label_names):
   label_name = label_names[class_label]
+  print(component_data)
   label_data = component_data[labels == class_label]
+  #labels == class_label -- This actually returns a list of True or False
   return (label_name, label_data)
 
 
@@ -41,6 +43,5 @@ for label_name, label_data in separated_data:
 plt.legend()  # adds legend to plot
 plt.title('Breast Cancer Dataset PCA Plot')
 plt.show()
-
 
 
