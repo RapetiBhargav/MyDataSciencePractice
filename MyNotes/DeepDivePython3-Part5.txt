@@ -1,3 +1,29 @@
+def fib(max):
+    a, b = 0, 1          
+    while a < max:
+        yield a          
+        a, b = b, a + b  
+
+for n in fib(1000):      
+    print(n, end=' ')
+	
+	
+class Fib:                                        
+    def __init__(self, max):                      
+        self.max = max
+
+    def __iter__(self):                           
+        self.a = 0
+        self.b = 1
+        return self
+
+    def __next__(self):                           
+        fib = self.a
+        if fib > self.max:
+            raise StopIteration                   
+        self.a, self.b = self.b, self.a + self.b
+        return fib  
+
 Classes and Iterators:
 
 class PapayaWhip:  
@@ -88,12 +114,39 @@ The for loop calls Fib(1000) which returns an instance of the Fib class. Call th
 The for loop calls iter(fib_inst), which returns an iterator object. 
 Call this fib_iter. In this case, fib_iter == fib_inst, because the __iter__() method returns self, but the for loop doesn’t know (or care) about that.
 
-The next concepts seem blurry, lets come back after sometime to them.
+Instance variables are specific to one instance of a class. 
 
+import fibonacci2
+fib1 = fibonacci2.Fib(100)
+fib2 = fibonacci2.Fib(200)
 
+print (fib1.max)
+#100
+print (fib2.max)
+#200
 
+Raise StopIteration Error:
+This little bit of magic is actually the key to using iterators in for loops.
+This swallows the error.
 
+Plural Rule Iterator:
+=====================
+Let’s rewrite the plural rules generator as an iterator.
 
+r2.rules_filename --->> You can change this
+r2.__class__.rules_filename --->> You can change this as well
 
+r2.rules_filename = 'r2-override.txt'
+r2.__class__.rules_filename = 'papayawhip.txt'  --->> If you change the class attribute, all instances that are still 
+													  inheriting that value (like r1 here) will be affected.
+                                                      Instances that have overridden that attribute (like r2 here) will not be affected.(V.V.Important)
+													  
+The one thing that every __iter__() method must do is return an iterator. 
+In this case, it returns self, which signals that this class defines a __next__() method
 
+A bit of advanced file trickery: The readline() method (note: singular, not the plural readlines()) reads exactly one line from an open file.
+I.e, File objects are iterators too!!!
 
+tell() and seek() methods.
+You could open the file, read one rule, save the file position with the tell() method, 
+close the file, and later re-open it and use the seek() method to continue reading where you left off.

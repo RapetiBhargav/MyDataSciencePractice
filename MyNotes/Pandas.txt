@@ -70,7 +70,6 @@ drop_duplicates() method
 
 Pandas DataFrame Operations - Pivot Tables and Functions
 ========================================================
-
 Understand Pivot table using an example
 pivot tables are indeed a powerful tool for data analysis!
 

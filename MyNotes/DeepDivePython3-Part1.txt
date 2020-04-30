@@ -454,19 +454,3 @@ You can assign None to any variable, but you can not create other NoneType objec
 
 None In A Boolean Context:
 In a boolean context, None is false and not None is true.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

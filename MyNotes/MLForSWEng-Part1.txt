@@ -62,16 +62,28 @@ d = arr.copy()
 			   
 print('Array a: {}'.format(repr(d)))
 
+2-D Arrays
+These are often used to represent matrix or 2nd order tensors.
+NumPy has a whole sub module dedicated towards matrix operations called numpy.mat
+
+3-D arrays
+These are often used to represent a 3rd order tensor.
+
+a.ndim --->> dimensions of the array
+
+Creating an array with multiple dimensions
+arr = np.array([1, 2, 3, 4], ndmin=5)
+
 When the elements of a NumPy array are mixed types, then the array's type will be upcast to the highest level type
-Similar to Python lists, when we make a reference to a NumPy array it doesn't create a different array. 
+Similar to Python lists, when we make a reference to a NumPy array it doesn't create a different array.
 We get around this by using an array's inherent copy function. 
  
 C. Casting
+If a type is given in which elements can't be casted then NumPy will raise a ValueError.
+
 We cast NumPy arrays through their inherent astype function.
 coin_flips = np.random.randint(2, size=data.shape)  ---> Creates array of 0's and 1's
-bool_coin_flips = coin_flips.astype(np.bool)
-
-To specify the number of elements in the returned array, rather than the step size, we can use the np.linspace function.
+bool_coin_flips = coin_flips.astype(np.bool) --->> just an observation, you can use just bool instead of np.bool
 
 arr = np.array([np.nan, 1, 2])
 np.array([np.nan, 1, 2], dtype=np.int32)--->>np.nan cannot take on an integer type.
@@ -79,10 +91,23 @@ np.array([np.nan, 1, 2], dtype=np.int32)--->>np.nan cannot take on an integer ty
 arr = np.array([np.inf, 5])
 np.array([np.inf, 3], dtype=np.int32)--->>np.inf cannot take on an integer type.
 
+Copy and View:
+-------------
+The main difference between a copy and a view of an array is that the copy is a new array, and the view is just a view of the original array
+
+import numpy as np
+arr = np.array([1, 2, 3, 4, 5])
+x = arr.copy()
+y = arr.view()
+print(x.base)  --> to check base
+print(y.base)  --> to check base
+
+The copy returns None.
+The view returns the original array.
+
 NumPy Basics:
 ==============
 arr = np.arange(-1.5, 4, 2)
-
 arr = np.linspace(5, 11, num=4, dtype=np.int32,endpoint=False) --->>To specify the number of elements in the returned array, 
 																	rather than the step size, we can use the np.linspace function.
 																	
@@ -91,14 +116,20 @@ reshaped_arr = np.reshape(arr, (2, 4))
 reshaped_arr = np.reshape(arr, (-1, 2, 2)) -->>We are allowed to use the special value of -1 in at most one dimension of the new shape. 
 											   The dimension with -1 will take on the value necessary to allow the new shape to contain 
 											   all the elements of the array.
+											   
+print(arr.reshape(2, 4).base)  -->> returns a view , and not a copy
 
 arr = np.arange(8)
-arr = np.reshape(arr, (2, 4)) --->> NumPy provides an inherent function for flattening an array. 
+arr = np.reshape(arr, (2, 4)) 
+newarr = arr.reshape(-1) --->> NumPy provides an inherent function for flattening an array. 
 
 transposed = np.transpose(arr, axes=(1, 2, 0)) --->> Default axes value is [2, 1, 0]
 
 arr = np.ones((2, 3), dtype=np.int32)
 arr = np.zeros((2, 3), dtype=np.int32)
+
+np.array_split(arr, 4) -->> the end arrays will adjust
+np.split(arr, 4) -->> will not adjust
 
 Math:
 ======
@@ -137,6 +168,9 @@ Normal  Distribution: print(repr(np.random.normal(loc=-2.4, scale=4.0,size=(2, 2
 
 Custom Sampling:
 np.random.choice(colors, size=(2, 2),p=[0.8, 0.19, 0.01])
+
+Random Permuation:
+shuffle() and permutation() methods
 
 Indexing:
 ---------
@@ -212,8 +246,46 @@ np.save will append the ".npy" extension to it.
 
 load_arr = np.load('arr.npy') --> .npy extn is needed here
 
+How To Create Your Own ufunc:
+=============================
+They also provide broadcasting and additional methods like reduce, accumulate etc. that are very helpful for computation.
 
-							 
+ufuncs also take additional arguments, like:
+where boolean array or condition defining where the operations should take place.
+dtype defining the return type of elements.
+out output array where the return value should be copied.
+
+Create your own ufunc for addition:
+===================================
+import numpy as np
+def myadd(x, y):
+  return x+y
+myadd = np.frompyfunc(myadd, 2, 1)
+print(myadd([1, 2, 3, 4], [5, 6, 7, 8]))
+
+To check if function is a Ufunc:
+type(np.add) == np.ufunc
+
+from math import log
+import numpy as np
+nplog = np.frompyfunc(log, 2, 1)
+print(nplog(100, 15))
+
+add() and sum()
+Addition is done between two arguments whereas summation happens over n elements
+
+x = np.lcm(num1, num2) -->LCM between 2 numbers
+x = np.lcm.reduce(arr) -->LCM between all numbers in an array
+
+The reduce() method will use the ufunc, in this case the lcm() function, on each element, and reduce the array by one dimension.
+For a multi-dimensional array, accumulate is applied along only one axis
+
+np.add.reduce(x)
+np.add.accumulate(x)
+
+
+
+
 
 
 

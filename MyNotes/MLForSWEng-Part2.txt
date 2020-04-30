@@ -17,7 +17,14 @@ Learn about the pandas Series object for 1-D data.
 For 1-D data, we use the pandas.Series objects, which we'll refer to simply as a Series.
 A Series is created through the pd.Series constructor, which takes in no required arguments but does have a variety of keyword arguments.
 
+series = pd.Series(5)
+series = pd.Series([1, 2, 3])
+
 ser = pd.Series([[1, 2], [3, 4]])
+
+0    [1, 2]
+1    [3, 4]
+dtype: object
 
 Since Series objects are 1-D, the ser variable represents a Series with lists as elements, rather than a 2-D matrix.
 
@@ -79,9 +86,16 @@ Combine multiple DataFrames through concatenation and merging.
 append function for concatenating DataFrame rows
 concat function for concatenating DataFrame rows and columns
 
+In concat or drop
+axis=1 --> columns
+axis=0 --> rows(default)
+
 The final call to pd.concat resulted in a DataFrame with many NaN values. This is because the row labels for df1 and df3 did not match, 
 so result was padded with NaN in locations where values did not exist.
- 
+
+Merging:
+mlb_merged = pd.merge(mlb_df1, mlb_df2)  --->> Can merge based on same coloumns
+
 Indexing
 Understand how DataFrame values can be accessed via indexing
 1.Direct Indexing
@@ -200,6 +214,10 @@ Hence here we need to explicitly set axis=0
 Given 2*3 matrix
 df_ms = df.multiply([1000, 1], axis=0) --->>apply on each row
 df_w = df_ms.multiply([1,0.5,1]) --->>apply on each column
+
+Usecase:
+In the code above, the test times for processor 'p1' were measured in seconds, while the times for 'p2' were in milliseconds. 
+So we made all the times in milliseconds by multiplying the values of 'p1' by 1000.
 
 Filtering
 Filter DataFrames for values that fit certain conditions

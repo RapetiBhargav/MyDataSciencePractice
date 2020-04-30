@@ -55,6 +55,7 @@ Instead, you can use np.vstack (vertical stack) or np.hstack(horizontal stack) t
 Likewise hsplit and vsplit for horizontal and vertical splitting
 
 universal functions (ufuncs)-->>operate on nD-arrays in an element-by-element fashion(i.e vectorized operations)
+Supporting array broadcasting,typecasting etc
 
 Native arithmentic operators
 print("x + 5 =", x + 5)
@@ -73,4 +74,76 @@ print(x < 6)
 # Boolean mask
 print(x[x < 6])
 
+Python Lambda:
+==============
+https://www.w3schools.com/python/python_lambda.asp
 
+A lambda function is a small anonymous function.
+A lambda function can take any number of arguments, but can only have one expression.
+
+*****The self parameter is a reference to the current instance of the class*****
+
+x = lambda a, b, c : a + b + c
+print(x(5, 6, 2))
+
+The power of lambda is better shown when you use them as an anonymous function inside another function.
+
+def myfunc(n):
+  return lambda a : a * n
+mytripler = myfunc(3)
+print(mytripler(11))
+
+Python Inheritance:
+===================
+
+class Person:			--->> Base class.
+  def __init__(self, fname, lname):
+    self.firstname = fname
+    self.lastname = lname
+
+  def printname(self):
+    print(self.firstname, self.lastname)
+
+#Use the Person class to create an object, and then execute the printname method:
+
+x = Person("John", "Doe")
+x.printname()
+
+class Student(Person): --->> Derived class.
+  pass
+
+x = Student("Mike", "Olsen")	
+x.printname()
+
+Child class inherits the properties and methods from its parent.
+When you add the __init__() function, the child class will no longer inherit the parent's __init__() function.
+The child's __init__() function overrides the inheritance of the parent's __init__() function.
+
+class Student(Person):
+  def __init__(self, fname, lname):
+    #add properties etc.
+
+To keep the inheritance of the parent's __init__() function, add a call to the parent's __init__() function:
+
+class Student(Person)
+  def __init__(self, fname, lname):
+    Person.__init__(self, fname, lname) ---> this one
+
+Or just use super()
+
+class Student(Person):
+  def __init__(self, fname, lname):
+    super().__init__(fname, lname) ---> this one, no self here
+    self.graduationyear = 2019
+
+Add graduationyear as a parameter
+class Student(Person):
+  def __init__(self, fname, lname, year):
+    super().__init__(fname, lname)
+    self.graduationyear = year
+	
+def welcome(self):
+    print("Welcome", self.firstname, self.lastname, "to the class of", self.graduationyear)
+
+x = Student("Mike", "Olsen", 2019)
+x.welcome()

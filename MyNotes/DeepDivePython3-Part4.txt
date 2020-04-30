@@ -8,10 +8,24 @@ square brackets mean “match exactly one of these characters.”
 
 re.sub() function performs regular expression-based string substitutions.
 
-A List Of Functions:
+A List Of Functions
+-------------------
 
 The “rules” variable is a sequence of pairs of functions.
 
+rules = ((match_sxz, apply_sxz),             
+         (match_h, apply_h),
+         (match_y, apply_y),
+         (match_default, apply_default)
+         )
+
+def plural(noun):           
+    for matches_rule, apply_rule in rules:      
+        if matches_rule(noun):
+            return apply_rule(noun)
+			
+A List Of Patterns
+-------------------
 def build_match_and_apply_functions(pattern, search, replace):
     def matches_rule(word):                                     
         return re.search(pattern, word)
@@ -19,10 +33,19 @@ def build_match_and_apply_functions(pattern, search, replace):
         return re.sub(search, replace, word)
     return (matches_rule, apply_rule)  
 
+patterns = (('[sxz]$','$','es'),('[^aeioudgkprt]h$','$','es'),('(qu|[^aeiou])y$','y$','ies'),('$','$','s'))                                                                                           
+rules = [build_match_and_apply_functions(pattern, search, replace) for (pattern, search, replace) in patterns]
+
+def plural(noun):
+    for matches_rule, apply_rule in rules:
+        if matches_rule(noun):
+            return apply_rule(noun)
+			
 This technique of using the values of outside parameters within a dynamic function is called closures. 
 ****build_match_and_apply_functions() is a function that builds other functions dynamically.****
 
 A File Of Patterns
+-------------------
 
 rules = []
 with open('plural4-rules.txt', encoding='utf-8') as pattern_file:  -->>The with statement creates what’s called a context, 
@@ -83,3 +106,6 @@ def plural(noun, rules_filename='plural5-rules.txt'):
 
 rules() is a generator that spits out match and apply functions on demand.
 Since rules() is a generator, you can use it directly in a for loop.
+
+With generators, you can do everything lazily: you read the first rule and create functions and try them, 
+and if that works you don’t ever read the rest of the file or create any other functions.
