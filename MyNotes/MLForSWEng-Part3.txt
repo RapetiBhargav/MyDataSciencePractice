@@ -82,6 +82,10 @@ transformed = robust_scaler.fit_transform(data)
 
 Normalizing Data
 ----------------
+Normalization is the process of scaling individual samples to have unit norm.
+In basic terms you need to normalize data when the algorithm predicts based on the weighted relationships formed between data points. 
+Scaling inputs to unit norms is a common operation for text classification or clustering.
+
 Learn about data normalization and implement a normalization function.
 Learn how to apply L2 normalization to data
 
