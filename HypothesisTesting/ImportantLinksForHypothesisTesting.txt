@@ -1,0 +1,11 @@
+This gives a very intuitive idea of when to use One Sample proportion test, t-test, chi square test, ANOVA test using the p value.
+Also gives us an idea of what Hypothesis we can assume in these examples. 
+https://www.youtube.com/watch?v=I10q6fjPxJ0
+
+Calculating Chi Square Test for Independence: 
+https://www.youtube.com/watch?v=LE3AIyY_cn8&t=13s
+
+Chi-Square Test for Goodness of Fit:
+https://www.youtube.com/watch?v=b3o_hjWKgQw
+
+
