@@ -52,7 +52,7 @@ X.fillna(X.mean(), inplace=True)
 #Moreover, if you don’t replace missing values (NaN), creating polynomial features will raise a value error 
 #in the fit_transform phase, since the input should be finite.
 
-#when degree is set to two and X=x1, x2, the features created will be 1, x1, x2, x1², x1x2 and x2²
+#when degree is set to two and X=x1, x2, the features created will be 1, x1, x2, x1², x1x2 and x2².interaction_only=True will not have the square terms here.
 
 from sklearn.preprocessing import PolynomialFeatures
 poly = PolynomialFeatures(degree=3, interaction_only=True)
@@ -118,8 +118,9 @@ cat = pd.Categorical(Z.edu_level,
                      categories=['missing', 'low', 
                                 'medium', 'high'], 
                      ordered=True)
+print(cat)
 
-cat.fillna('missing') ## Not sure why this is used , since mising values are taken care by factorize anhyways.
+cat.fillna('missing') ## Not sure why this is used , since mising values are taken care by factorize anyways.
 #Comment this out and you will get the same result
 
 #The factorize method provides an alternative that can handle missing values and 
@@ -145,7 +146,11 @@ nominals['edu_level'] = Z.edu_level
 from sklearn.preprocessing import KBinsDiscretizer
 disc = KBinsDiscretizer(n_bins=3, encode='ordinal', strategy='uniform')
 Discret=disc.fit_transform(X)
+print(disc.bin_edges_) # To check how bins are divided, based on strategy
 
+#Feature binarization is the process of thresholding numerical features to get boolean values.
+#binarization is an extreme form of two-bin discretization.
+#useful as a feature engineering technique for creating new features that indicate something meaningful.
 from sklearn.preprocessing import Binarizer
 binarizer = Binarizer(threshold=0, copy=True)
 BinerizedData=binarizer.fit_transform(X.f3.values.reshape(-1, 1))
