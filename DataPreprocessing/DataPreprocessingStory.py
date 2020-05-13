@@ -81,9 +81,15 @@ Y = pd.DataFrame(
               .reshape((5,3)))
 Y.columns = ['sex', 'blood_type', 'edu_level']
 
+#Convert categorical variable into dummy/indicator variables using get_dummies.
+
 #Ordinal and Nominal categorical features
 #Ordinal -Categorical features which can be put in order.Like medium , high , low
 #Nominal -Categorical features which cannot be put in order.
+
+lencoder = preprocessing.LabelEncoder()
+lencoder.fit(titanic_train['Sex'])
+print(lencoder.classes_)
 
 from sklearn.preprocessing import OrdinalEncoder
 encoder = OrdinalEncoder()
