@@ -232,6 +232,22 @@ Gist: Basically we use training=True while using MCDropout...hence we need to be
 
 Useful when building a risk-sensitive application
 
-Max-norm:
+Max-norm: --- Need to see
 =========
+
+*****
+Code:
+=====
+erf(z)
+Returns the error function of complex argument.
+
+erfc(x[, out])
+Complementary error function, 1 - erf(x).
+
+erfcx(x[, out])
+Scaled complementary error function, exp(x**2) * erfc(x).
+
+Since we are usingDenselayers, only patterns that occur at the same location can be reused (in contrast, 
+convolutional layers will transfer much better, since learned patterns can be detected anywhere on the image
+
 

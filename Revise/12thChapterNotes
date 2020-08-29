@@ -161,6 +161,7 @@ class HuberMetric(keras.metrics.Metric):
 		self.count = self.add_weight("count", initializer="zeros")
 	update_state():
 	    <code to update total and count>
+		self.total.assign_add
 	result(self):
 		return self.total / self.count
 	get_config(self):
@@ -217,16 +218,16 @@ Custom Models:
 Example of building Residual blocks(layer which contains other layers). [Do not get confused with Wide-and-deep models]
 Put this residual block in a custom model.
 
-Implement the get_config() method in both the ResidualBlock class and the ResidualRegressor class. 
+Implement the get_config() method in both the ResidualBlock class and the ResidualRegressor class.
 Alternatively, you can save and load the weights using the save_weights() and load_weights() methods.
 
 Losses and Metrics Based on Model Internals: ---- Need to see
 ============================================
 
-Computing Gradients Using Autodiff:			 ----Need to do some more reading
+Computing Gradients Using Autodiff:			 ---- Need to do some more reading
 ===================================
 Backpropagation refers to the whole process of training an artificial neural network using multiple backpropagation
-steps, each of which computes gradients and uses them to perform a Gradient Descent step. 
+steps, each of which computes gradients and uses them to perform a Gradient Descent step.
 In contrast, reverse-mode autodiff is just a technique to compute gradients efficiently, and it happens to be used by backpropagation.
 
 Types of Auto-Diff:
@@ -239,7 +240,7 @@ We create a tf.GradientTape context that will automatically record every operati
 ask this tape to compute the gradients of the result z with regard to both variables [w1, w2].
 
 with tf.GradientTape() as tape:			>>>>>>>>>>>>>>>>>>Create GradientTape context
-	z = z = my_softplus(w1,w2)			>>>>>>>>>>>>>>>>>>Loss function you defined.
+	z = my_softplus(w1,w2)			    >>>>>>>>>>>>>>>>>>Loss function you defined.
 
 gradients = tape.gradient(z, [w1, w2])  >>>>>>>>>>>>>>>>>>>>>Call the tape's Gradient function
 
@@ -277,3 +278,13 @@ TF operations do not perform any computations.
 tf.autograph.to_code(sum_squares.python_function) 		>>>>>>>>>>>>>To see upgraded function generated in AutoGraph(not pretty!)
 
 Next talked about some rules in order to convert a function to tf-function.
+
+Code:
+=====
+If you do the math, you will find that loss = metric * mean of sample weights (plus some floating point precision error).
+Example: history.history["loss"][0], history.history["huber_fn"][0] * sample_weight.mean()
+
+concrete_function = tf_cube.get_concrete_function(tf.constant(2.0))
+concrete_function.graph
+
+Need to see code thoroughly

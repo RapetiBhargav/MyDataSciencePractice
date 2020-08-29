@@ -1,0 +1,272 @@
+8.Cloud APIs for Computer Vision
+9.Scalable Inference Serving on Cloud using TF Serving and KubeFlow
+
+Example of digitizing documents
+
+Amazon, Google, IBM, Microsoft — provide a similar set of computer-vision APIs that label images, detect and recognize faces
+and celebrities, identify similar images, read text, and sometimes even discern handwriting. 
+
+Some of them even provide the ability to train our own classifier without having to write a single line of code
+They have spent millions in acquiring and labeling datasets with a granular taxonomy much beyond the ImageNet dataset.
+
+Chapters Chapter 5 and Chapter 6 optimized for accuracy and performance, respectively; 
+this chapter essentially optimizes for human resources.
+
+Clarifai
+---------
+Photographs, face-based multicultural appearance classifier, photograph aesthetic scorer.
+Embedding vector generation to help us build our own reverse-image search.
+Through its public API, the image tagger supports 11,000 concepts.
+
+Microsoft Cognitive Services
+----------------------------
+It’s a comprehensive set of more than 50 APIs
+ranging from vision, natural language processing, speech, search,
+knowledge graph linkage.
+Using these APIs : Mimicker Alarm (which requires making a particular facial expression in order to defuse the morning alarm).
+Due to many enterprise customers, Cognitive Services does not use customer image data for improving its services.
+
+Google Cloud Vision
+-------------------
+In the world of deep learning, having large amounts of data is definitely an advantage to
+improve one’s classifier, and Google has a lot of consumer data. 
+For example, with learnings from Google Street View, you should expect relatively good performance in 
+real-world text extraction tasks, like on billboards.
+
+Amazon Rekognition
+------------------
+Considering most companies already offer photo analysis APIs, Amazon is doubling
+down on video recognition offerings to offer differentiation.
+License plate recognition, video recognition APIs, and better end-to-end integration examples of Rekognition APIs 
+with AWS offerings like Kinesis Video Streams, Lambda, and others.
+
+IBM Watson Visual Recognition
+-----------------------------
+AlchemyVision has been used for powering the Visual Recognition APIs
+Watson does not offer optical character recognition yet.
+
+Comparing Visual Recognition APIs:
+==================================
+Service Offerings
+Cost
+Accuracy - Building a reproducible benchmark, we assess the text extraction quality using the COCO-Text dataset
+		   We have Code to reproduce this
+Bias - They can creep into the datasets. These companies are taking bias removal from their datasets quite seriously
+		   Bias for people of color.
+		   Bias for low vs high income countries(Accuracy by income)
+Getting Up and Running with Cloud APIs
+		   At a high level, get an API key, load the image, specify the intent, make a POST request with the
+		   proper encoding (e.g., base64 for the image), and receive the results
+		   Sometimes you may get tags of type nouns, adjectives etc.. which we might not need.
+		   Check their linguistic type against Princeton’s WordNet available in NLTK.
+           Based on probability “This image contains....” or “This image may contain…” in the UI.
+Training Our Own Custom Classifier
+		   A few of these cloud providers give us the ability to train our own custom classifier by merely using a drag-and-drop interface. 
+		   The pretty user interfaces provide no indication that under the hood they are using transfer learning.
+		   Additionally, some of them even allow building custom detectors, which can identify the location of objects with a bounding box.
+		   You can publish the model as a Rest API, or download the model for Inference as well.
+Top Reasons Why Our Classifier Does Not Work Satisfactorily
+		   Not enough data
+		   Nonrepresentative training data
+		   Unrelated domain
+					Using it for regression - Custom Vision is primarily a classification system. Using it to count
+					objects by tagging the number of objects is the wrong approach, and will lead to unsatisfactory results.
+					Use Object Detection instead
+		  Classes are too similar - Build Keras classifier instead.
+		  Good feature: If model is unsure, the web UI shows up for manual tagging.
+Comparing Custom Classification APIs - We have stress tested on Stannford Dogs dataset.
+
+Performance Tuning for Cloud APIs
+---------------------------------
+Resizing
+		Effect of Resizing on Image Labeling APIs
+		Effect of Resizing on OCR APIs		>>>>> This needs a read
+Compression
+		Effect of Compression on Image Labeling APIs   
+		Effect of Compression on OCR APIs
+
+Case Studies:
+--------------
+The New York Times - Archiving and Image Tagging - Google Vision API
+Uber - Real Time ID Check - Microsoft Cognitive Services API
+Giphy - Google Vision API
+OmniEarth - IBM Watson
+Photobucket - Clarifai
+Staples  - Descriptive image tags - Clarifai
+InDro Robotics - to power search and rescue operations - Microsoft Cognitive Services
+
+Scalable Inference Serving on Cloud using TF Serving and KubeFlow
+=================================================================
+You know that the investors will question you about your cloud strategy, and you need to show a solid demo before they even
+consider giving you the money.
+
+Trying to serve it to a larger group of people was a months-long battle, often involving backend engineers and DevOps teams
+
+Q's in context of hosting and serving custom-built models.
+1.How can I host my model on my personal server
+2.Cannot host my model on the cloud, but only on-premises
+3.Can I do inference on GPUs?
+4.How much can I expect to pay for each of these options?
+5.Could I scale my training and serving across multiple cloud providers?
+
+Different Inferenec Serving Options:
+=====================================
+Flask: Build Your Own Server
+1.Really useful for prototyping.
+2.$ curl -X POST -F image=@dog.jpg 'http://localhost:5000/infer'
+3.Flask runs only locally
+4.To make Flask available to others on the network, we can simply change app.run() to the following:
+app.run(host="0.0.0.0")
+5.“WARNING: Do not use the development server in a production environment.”
+
+Desirable Qualities in a Production-Level Serving System:
+---------------------------------------------------------
+High Availability - Metric "Number of 9's"
+Scalability - A smarter way to manage traffic loads is to monitor them as they are
+              coming in and dynamically allocate and deallocate resources.
+Latency(critical) - Percentile latency is the typically reported metric. 
+					For example, a service might report 987 ms @ 99th percentile.
+Geographic Availability - You have latency measurement tools.
+						  AzureSpeed.com      Microsoft Azure
+						  CloudPing.info      Amazon Web Services
+						  GCPing.com Google   Cloud Platform
+Failure Handling - If a machine goes down, quickly bring up another machine to take
+				   its place and continue serving traffic.
+Monitoring - Dashboards for task-specific analytics like time for model inference, preprocessing etc.
+Model Versioning - The incoming data distribution might
+				   shift over time compared to what it was trained on, leading to lower
+				   prediction power (a phenomenon called concept drift).
+				   We want to keep improving our models.					
+A/B Testing
+Support for Multiple Machine Learning Libraries
+
+Google Cloud ML Engine: A Managed Cloud AI Serving Stack		
+---------------------------------------------------------
+There are several cloud-based Inference-as-a-Service solutions on the market today.
+We have chosen to explore the Google Cloud ML Engine partly because of the convenient TensorFlow integration 
+and partly because it ties in nicely with the ML Kit
+
+Deploy model as .pb and not .h5
+You first need to convert your image into a request.json file using the image-to-json.py script
+
+Cons:
+There are situations for which a hosted solution might not be the best approach. 
+Reasons could include pricing models, data privacy issues, legal questions, technical issues, trust concerns
+
+A solution that is hosted and managed locally (or, “on-premises”) would be preferable
+
+TensorFlow Serving:
+-------------------
+1.Designed for use in production
+2.It is one of the integral components of TensorFlow Extended (TFX) — an end-to-end deep learning pipeline in the TensorFlow ecosystem.
+3.Ability to serve multiple models at the same time on the same service.
+4.It uses separate thread pools for loading models and for serving inferences while giving higher priority to 
+the threads in the inference pool.
+5.It builds minibatches of incoming asynchronous requests for short periods of time.
+
+$ docker run -p 8501:8501 \
+--mount type=bind,source=/path/to/dogcat/,target=/models/dogcat \
+-e MODEL_NAME=dogcat -t tensorflow/serving
+
+For GPU-enabled machines, run the following command, instead:
+$ docker run -p 8501:8501 --runtime=nvidia \
+--mount type=bind,source=/path/to/dogcat/,target=/models/dogcat \
+-e MODEL_NAME=dogcat -t tensorflow/serving
+
+Cons:
+Even though TensorFlow Serving is a great choice for serving inferences
+from a single machine, it does not have built-in functionality for horizontal
+scaling. Instead, it is built to be used in conjunction with other systems that
+can supercharge TensorFlow Serving with dynamic scaling.(Like Kubernetes)
+
+KubeFlow:
+---------
+Deep Learning Pipeline: People dedicate their lifetimes developing expertise in just one of these fields.
+
+How are we going to scale up containers to match rises in demand? How
+would we efficiently distribute traffic across containers? How do we ensure
+that the containers are visible to one another and can communicate? - Use Kubernetes for Container Orchestration
+But....
+A machine learning practitioner using Kubernetes still needs to assemble
+all of the appropriate sets of containers (for training, deployment,
+monitoring, API management, etc.) that then need to be orchestrated
+together to make a fully functioning end-to-end pipeline. Unfortunately,
+many data scientists are trying to do exactly this in their own silos,
+reinventing the wheel building ad hoc machine learning-specific pipelines.
+Enter...
+KubeFlow: (Kubernetes , tensorflow and much more)
+1.Kubernetes-based solution for machine learning scenarios?
+2.Scale up with demand
+3.It’s built to be compatible with all major cloud providers - Not tied to a specific cloud service.
+4.It’s built on top of Docker and Kubernetes,
+
+Tools: Jupyter Hub,KFServing,Katib, Pipelines
+Pipelines: Managing experiments, jobs, and runs, scheduling machine learning workflows
+		   Pipelines give us the ability to compose steps across the machine learning
+           to schedule complex workflows.
+
+Two important parts to KubeFlow that make it unique: pipelines and fairing.
+1. Pipelines - Explained above
+2. Fairing - Fairing allows us to manage the entire build, train, and deploy lifecycle
+			 directly through Jupyter Notebooks
+
+Start a new notebook server, where we can host all of our Jupyter Notebooks, run
+training on them, and deploy our models to Google Cloud using the
+following few lines of code.
+
+from fairing.deployers.gcp.gcpserving import GCPServingDeployer
+GCPServingDeployer().deploy(model_dir, model_name, version_name)
+
+Kubeflow:(From QwikLabs)
+========================
+1.How to install and use Kubeflow Pipelines to orchestrate various Google Cloud Services in an end-to-end ML pipeline
+2.Once Kubeflow Pipelines are installed you create an AI Platform Notebook(with 2 example notebooks-to demonstrate how the services are used)
+
+Steps:
+Kubernetes cluster-->install Kubeflow Pipelines
+Launch an AI Platform Notebook-->Download example Notebooks-->Create and run and end-to-end ML Pipeline using Cloud AI Platform
+
+Convert a series of basic python function to pipeline components
+Assemble and execute a new pipeline with these python functions
+
+Kubeflow Pipelines integrated into your Google Cloud environment as AI Platform-->>Pipelines.
+Allow access to the following Cloud APIs
+Creates cluster(GKE)..2-3 mins, VMs created.(GCE)
+You can connect to Kubeflow pipeline instance using  
+kfp.Client(host='5396823e048319a7-dot-us-central2.pipelines.googleusercontent.com')
+
+Create a notebook(this will create another VM). Open the terminal, and clone examples.
+
+Pipeline Prerequisites before executing the notebooks:
+1. Setup Storage Buckets
+2. Keep aside Kubeflow Pipeline Host ID: 
+kfp.Client(host='5396823e048319a7-dot-us-central2.pipelines.googleusercontent.com')
+
+Open Pipelines Dashboard --> see Pipelines(some 5-6 pipelines are already present),Experiments.
+You generally will group multiple related pipeline runs in a single experiment for later comparison.
+
+Execute a pipeline from your AI Platform Notebook.(you give the pipeline's host ID in the code)
+BigQuery and AI Platform training rather than execute all the pipeline logic in the local GKE cluster.
+
+Experiment has bunch of runs.
+
+PYTHON_MODULE = 'trainer.task'
+
+submit a training job to the AI Platform.
+
+subprocess.run([sys.executable, '-m', 'pip', 'install', 'tensorflow==1.8.0'])
+
+Kubeflow defines custom Kubernetes resources for distributed training jobs. So you can create a config file that specifies the details you use for training.
+
+TFServing, KFServing , Seldon - core or you can have your own serving system.
+
+Training and KFServing uses YAML files
+Canary rollouts discussed in KFServing.
+
+Price Versus Performance Considerations:
+========================================
+Cost Analysis of Inference-as-a-Service
+Cost Analysis of Building Your Own Stack over Azure VMs(With GPUs, TFServing with Kubeflow)
+Just see Pic. CloudvsBYOSonVMs
+
+
