@@ -1,0 +1,124 @@
+Chapter 10 Questions:
+=====================
+1.automatic differentiation or autodiff, reverse-mode autodiff
+2.Chain rule
+3.Step function, logistic fn, hyperbolic tangent function, ReLU, Softplus activation function,Huber Loss(MSE+MAE)
+4.PlaidML
+5.Tensorflow/Pytorch's strenghts/weakness
+6.flatten ---> similar to X.reshape(-1,1)
+7.keras.layers.InputLayer as the first layer
+8.model.summary()
+9.None means No batch size mentioned
+10.keras.utils.plot_model()
+11.fetch a layer by its index
+12.get_weights() and set_weights()
+hidden1 = model.layers[1]
+weights, biases = hidden1.get_weights()
+kernal_initializer, bias_initializer
+13.weight matrix depends on the number of inputs
+training or when you use build method
+14.compile -- loss, optimizer, metrics
+15.sparse_categorical_cross_entropy(targets are integers), categorical_crossentropy(targets are one-hot encoded) and binary_crossentropy
+16.keras.utils.to_categorical()(sparse labels to one-hot vector labels), np.argmax(axis=1)
+17.Instead of validation set, use validation split
+18.If the data is skewed, use the class_weight argument
+19.Per-instance weights...class_weight*sample_weight (giving more weights to expert's samples)
+20.fit() returns a history object...history.epoch, history.history(dictionary contains loss, metrics at end of each epoch for train and validation--use this dictionary in a dataframe, use plot() to get learning curves)
+21.What you can learn from the learning curves?
+22.keras continues training from where it left off
+23.compile, fit, evaluate, predict
+24.model.predict_classes(X_new), np.array(class_names)[y_pred]
+25.keras.models.Sequential, functional(for multiple inputs, outputs, wide and deep NNs-simple patern might end up distorted - use Concatenate() layer)
+26.Wide and deep - sending subset of features as input...X_train is passed as a pair (X_train_A,X_train_B)
+27.Multiple outputs - classify the main object in a pic(classify,regression for coordinates),multitask classification(2 classification tasks),Regularization technique (add some auxillary outputs)....Use dictionary mappings to avoid getting the order wrong.
+Use {"wide_input":X_train_A, "deep_input": X_train_B} while mentioning
+instead of 
+history = model.fit((X_train_A, X_train_B), y_train, epochs=20, validation_data=((X_valid_A, X_valid_B), y_valid))
+
+28.We care more about the main output than the auxillary output
+model.compile(loss=["mse", "mse"], loss_weights=[0.9, 0.1], optimizer="sgd")
+
+history = model.fit([X_train_A, X_train_B], [y_train, y_train], epochs=20,validation_data=([X_valid_A, X_valid_B], [y_valid, y_valid])) --> i.e main output and auxillary output should predict the same thing, so mentioned y_**** twice.
+
+We get all types of loss, when we evaluate
+total_loss, main_loss, aux_loss = model.evaluate([X_test_A, X_test_B], [y_test, y_test]) -->> y_test twice
+y_pred_main, y_pred_aux = model.predict([X_new_A, X_new_B])
+
+29.Sequential API and the Functional API are declarative(static)...For Dynamic Models use the Subclassing API
+Declare the layers in __init__ method. Combine the layers in call(). (i.e we seperate the creation of layers, from their usage)
+
+30.Save model(Keras saves in .h5, HDF5 format..we can save it in .pb format also) , load model....save_weights(), load_weights() 
+for model which use subclassing.
+
+31.Save checkpoints at regular intervals during training -- Use callbacks in fit() method to save checkpoints.
+32.
+Use ModelCheckpoint callback, use save_best_only saves the best model of validation
+checkpoint_cb = keras.callbacks.ModelCheckpoint("my_keras_model.h5", save_best_only=True)
+history = model.fit(X_train, y_train, epochs=10, validation_data=(X_valid, y_valid), callbacks=[checkpoint_cb])
+
+Or use can also use (early stopping + checkpoint_cb)
+early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
+history = model.fit(X_train, y_train, epochs=100, validation_data=(X_valid, y_valid), callbacks=[checkpoint_cb, early_stopping_cb])
+
+33.To build custom callbacks(for example if model is overfitting by calc. valloss/loss)
+Subclass from Callback class and override.
+class PrintValTrainRatioCallback(keras.callbacks.Callback):
+	def on_epoch_end(self, epoch, logs):
+
+You can use custom callbacks for fit, evaluate and predict too.
+
+on_*_begin(), on_*_end() .... * can be train,epoch, batch, 
+                                       test, test_batch
+									   predict, predict_batch
+
+34.Tensorboard (compare learning curves)- binary log files(event files), each binary record is called summary
+Keras provides a nice TensorBoard() callback
+TensorBoard can log embeddings
+tf.summary package uses SummaryWriter to log scalars, histograms , images etc. to be visualized on TensorBoard.
+
+Finding the right hyperparameters:
+===================================
+35. Use GridSearch, RandomSearch. Wrap the keras model with a scikit-learn wrapper.
+build_model() is the function where keras model is built - Mention the hyperparameters as arguments
+Wrap it here 
+keras_reg = keras.wrappers.scikit_learn.KerasRegressor(build_model). You can use keras_reg like keras or scikit-learn model.
+Discussed various hyperparameter tuning libraries. 
+
+Number of Neurons, layers:
+36. number of layers, number of neurons -->>> gradually increase it until the network starts overfitting
+But in practice use more neurons and more layers and use early stopping - "stretch pants" approach
+
+Learning Rate:
+37. Plot the loss as a function to the log scale of learning rate
+No loss for some time, next it shoots up....from this turning point take LR 10 times lower than this.
+
+Batch Size:
+38. One strategy is to try to use a large batch size, using learning rate warmup(starting with small LR and ramping up), and if training is unstable or
+the final performance is disappointing, then try using a small batch size instead.
+
+Number of Iterations(epochs):
+39.Use Early stopping instead.
+
+Code:
+=====
+Types of loading data.
+fashion_mnist = keras.datasets.fashion_mnist
+(X_train_full, y_train_full), (X_test, y_test) = fashion_mnist.load_data()
+
+You can directly use "train_test_split"
+housing = fetch_california_housing()
+X_train_full, X_test, y_train_full, y_test = train_test_split(housing.data, housing.target, random_state=42)
+X_train, X_valid, y_train, y_valid = train_test_split(X_train_full, y_train_full, random_state=42)
+
+
+plt.imshow(X_train[0], cmap="binary")
+plt.axis('off')
+plt.show()
+
+np.argmax(model.predict(x), axis=-1)
+(model.predict(x) > 0.5).astype("int32")
+
+Finally
+Exponential increase in LR using callback.(not to be confused with exponential decay we see in Chap. 11)
+
+Trick:Use early stopping , and rollback to best model, and evaluate

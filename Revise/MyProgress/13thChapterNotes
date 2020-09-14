@@ -1,0 +1,341 @@
+How to load, parse, and preprocess it efficiently
+==================================================
+Binary files that use TensorFlow’s TFRecord format, which supports records of varying sizes. 
+TFRecord is a flexible and efficient binary format usually containing protocol buffers (an open source binary format).
+ 
+The Data API also has support for reading from SQL databases. Moreover, many open source
+extensions are available to read from all sorts of data sources, such as Google’s BigQuery service.
+
+Using one-hot encoding, bag-of-words encoding, or embeddings (as we will see, an embedding is a trainable dense vector that
+represents a category or token). One option to handle all this preprocessing is to write your own custom preprocessing layers. 
+Another is to use the standard preprocessing layers provided by Keras.
+
+TF Transform (tf.Transform)
+Makes it possible to write a single preprocessing function that can be run in
+batch mode on your full training set, before training (to speed it up), and then
+exported to a TF Function and incorporated into your trained model so that once
+it is deployed in production it can take care of preprocessing new instances on
+the fly.
+
+TF Datasets (TFDS)
+
+Usually you will use datasets that gradually read data from disk,
+
+X = tf.range(10)
+dataset =tf.data.Dataset.from_tensor_slices(X)
+
+or use tf.data.Dataset.range(10)
+
+for item in dataset: 						>>>>>>>>>>>Iterate over a dataset
+
+dataset = dataset.repeat(3).batch(7)		>>>>>>>>>>>Chaining Transformations
+
+call batch() with drop_remainder=True
+
+dataset = dataset.map(lambda x: x * 2) # Items: [0,2,4,6,8,10,12] -->> applies a transformation to each item.
+num_parallel_calls argument to spawn to multiple threads
+The function you pass to the map() method must be convertible to a TF Function
+
+apply() method -->> applies a transformation to the dataset as a whole.
+Eg:
+dataset.apply(tf.data.experimental.unbatch())
+
+dataset = dataset.filter(lambda x: x < 10)
+
+for item in dataset.take(3): 				>>>>>>>>>>>take() is similar to head()
+
+dataset = tf.data.Dataset.range(10).repeat(3) # 0 to 9, three times
+dataset = dataset.shuffle(buffer_size=5, seed=42).batch(7)		>>>>>>>>>shuffle()
+for item in dataset:
+
+Above is for small datasets, but for large dataset
+Pick multiple files randomly and read them simultaneously, interleaving their records.
+
+Linux shuf command
+
+To shuffle the instances some more, a common approach is to split the source data into multiple files, then read them 
+in a random order during training.
+
+filepath_dataset = tf.data.Dataset.list_files(train_filepaths, seed=42)
+
+n_readers = 5 							   >>>>>>>>>>>>>Read from five files at a time and interleave their lines
+dataset = filepath_dataset.interleave(lambda filepath: tf.data.TextLineDataset(filepath).skip(1),cycle_length=n_readers)
+
+To be clear, at this stage there will be seven datasets in all: the filepath dataset, the interleave dataset,
+and the five TextLineDatasets
+
+def preprocess(line):
+	defs = [0.] * n_inputs + [tf.constant([], dtype=tf.float32)]
+	fields = tf.io.decode_csv(line, record_defaults=defs)				>>>>>>We pass a csv line here...Don't be confused with csv file.
+	x = tf.stack(fields[:-1])
+	y = tf.stack(fields[-1:])
+	return (x - X_mean) / X_std, y
+
+tf.stack() (to convert scalar to 1D tensors)
+
+Gist:filepath dataset-->interleave dataset[5 files]-->five TextLineDatasets[sample from these 5 files randomly until they are out of items. Then over to next]
+
+Putting Everything Together:
+============================
+def csv_reader_dataset(filepaths, repeat=1, n_readers=5,n_read_threads=None, shuffle_buffer_size=10000,n_parse_threads=5, batch_size=32):
+	dataset = tf.data.Dataset.list_files(filepaths)
+	dataset = dataset.interleave(lambda filepath: tf.data.TextLineDataset(filepath).skip(1),cycle_length=n_readers, num_parallel_calls=n_read_threads)
+	dataset = dataset.map(preprocess, num_parallel_calls=n_parse_threads)
+	dataset = dataset.shuffle(shuffle_buffer_size).repeat(repeat)
+	return dataset.batch(batch_size).prefetch(1)
+	
+Prefetch into CPU. You can also prefetch into GPU using tf.data.experimental.prefetch_to_device().
+
+We have discussed the most common dataset methods, but there are a few more you may want to look at: 
+concatenate(), zip(), window(),reduce(), shard(), flat_map(), and padded_batch(). 
+
+There are also a couple more class methods: from_generator() and from_tensors(), which create a new dataset
+from a Python generator or a list of tensors, respectively.
+
+Using the Dataset with tf.keras
+===============================
+You can also use a custom training loop(discussed in Chap 12)
+
+@tf.function
+def train(model, optimizer, loss_fn, n_epochs, [...]):
+	train_set = csv_reader_dataset(train_filepaths, repeat=n_epochs, [...])				>>>>>>>>>>Use the def above			
+	for X_batch, y_batch in train_set:													>>>>>>>>>>See this.
+		<Perform gradient descent step>
+
+The TFRecord Format
+===================
+Previous implementation does not support large or complex data structures (such as images or audio) - Use TFRecords instead.
+
+The TFRecord format is TensorFlow’s preferred format for storing large amounts of data and reading it efficiently.
+
+with tf.io.TFRecordWriter("my_data.tfrecord") as f:
+	f.write(b"This is the first record")
+	f.write(b"And this is the second record")
+	
+dataset = tf.data.TFRecordDataset(filepaths)
+
+Even though each record can use any binary format you want, TFRecord files usually contain serialized protocol buffers (also called protobufs).
+
+Introduction to Protocol Buffers
+================================
+tf.io.TFRecordWriter --->>Use instance of ProtoBuf, Access Class--->>SerializeToString()--->>Write
+
+tf.data.TFRecordDataset--->>ParseFromString()---->> Read
+
+But these are not TensorFlow operations.
+
+TensorFlow Protobufs:
+=====================
+import tensorflow.train.Example , instantiate and serialize and write
+
+
+from tensorflow.train import BytesList, FloatList, Int64List
+from tensorflow.train import Feature, Features, Example
+person_example = Example(
+features=Features(
+		feature={
+		"name": Feature(bytes_list=BytesList(value=[b"Alice"])),					>>>>>>>>>>
+		"id": Feature(int64_list=Int64List(value=[123])),							>>>>>>>>>>You can also mention a Tensor or binary data in 
+																							   the BytesList
+		"emails": Feature(bytes_list=BytesList(value=[b"a@b.com",b"c@d.com"]))		>>>>>>>>>>
+}))
+
+Typically, you would create a conversion script that reads from your current format (say, CSV files), creates an
+Example protobuf for each instance, serializes them, and saves them to several TFRecord files.
+
+Loading and Parsing Examples:
+=============================
+Feature description is a dictionary that maps each feature name to either a tf.io.FixedLenFeature or tf.io.VarLenFeature.
+The fixed-length features are parsed as regular tensors, but the variable-length features are parsed as sparse tensors.(you can convert to dense)
+When reading we will parse each Example using tf.io.parse_single_example() or you may want to parse them batch by batch using tf.io.parse_example()
+
+BytesList can contain binary data , including a serialized object. So for image use tf.io.encode_jpeg() to encode an image using the JPEG format 
+and put this binary data in a BytesList--->>serialize--->>TFRecord-->>while parsing use tf.io.decode_jpeg()
+
+Similarly tf.io.serialize_tensor(), tf.io.parse_tensor() for serializing tensors.
+
+Lists of Lists Using the SequenceExample Protobuf:
+==================================================
+For cumbersome data(like lists of lists, document contextual data etc) use SequenceExample protobuf.
+
+tf.io.parse_single_sequence_example()
+tf.io.parse_sequence_example()
+
+If the feature lists contain sequences of varying sizes, you may want to convert them to ragged
+tensors, using tf.RaggedTensor.from_sparse(). Eg: content
+
+We have seen how to efficiently store, load, and parse data. 
+Next how to prepare data!!
+
+Preprocessing the Input Features
+=================================
+This can be done ahead of time when preparing your data files, using any tool you like (e.g., NumPy, pandas, or Scikit-Learn). 
+Alternatively, you can preprocess your data on the fly when loading it with the Data API.
+
+Prefer to use a self contained custom layer.
+
+class Standardization(keras.layers.Layer):
+    def adapt(self, data_sample):
+        self.means_ = np.mean(data_sample, axis=0, keepdims=True)
+        self.stds_ = np.std(data_sample, axis=0, keepdims=True)
+    def call(self, inputs):
+        return (inputs - self.means_) / (self.stds_ + keras.backend.epsilon())
+
+standardization = Standardization(input_shape=[28, 28])
+
+sample_image_batches = train_set.take(100).map(lambda image, label: image)
+sample_images = np.concatenate(list(sample_image_batches.as_numpy_iterator()), axis=0).astype(np.float32)
+standardization.adapt(sample_images)
+
+# or perhaps soon:
+#standardization = keras.layers.Normalization()  				>>>>>>>>>>tf.keras.layers.experimental.preprocessing.Normalization is there now.
+#standardization.adapt(sample_images)
+
+Encoding Categorical Features Using One-Hot Vectors:
+====================================================
+Can be done using a lookup table
+
+table_init = tf.lookup.KeyValueTensorInitializer(vocab, indices)			>>>>> Initializer for the lookup table
+num_oov_buckets = 2
+table = tf.lookup.StaticVocabularyTable(table_init, num_oov_buckets)
+
+Here you get a lookup table with oov.
+KeyValueTensorInitializer or TextFileInitializer (if categories are mentioned in text file...1 every line)
+
+The more unknown categories you expect to find during training, the more oov buckets you should use.
+
+categories = tf.constant(["NEAR BAY", "DESERT", "INLAND", "INLAND"])
+cat_indices = table.lookup(categories)
+
+cat_one_hot = tf.one_hot(cat_indices, depth=len(vocab) + num_oov_buckets)
+
+# or perhaps soon:
+text_vectorization = tf.keras.layers.TextVectorization(						>>>>>>>>>>tf.keras.layers.experimental.preprocessing.TextVectorization is there now.
+	max_tokens=max_features,
+	output_mode='int',
+	output_sequence_length=max_len) 		
+#text_vectorization.adapt(sample_reviews)
+Follow this by a lambda layer with a tf.one_hot function 
+like 
+one_hot_layer = keras.layers.Lambda(lambda x: tf.one_hot(x))
+
+***If the vocabulary is large, it is much more efficient to encode them using embeddings instead.
+Rule of thumb: features <10 , use one-hot encoding , if features >50 use embeddings
+
+Encoding Categorical Features Using Embeddings:
+===============================================
+An embedding is a trainable dense vector that represents a category. By default, embeddings are initialized randomly.
+"NEAR BAY"-->>[0.131, 0.890]
+"NEAR OCEAN"-->>
+We use 2D embeddings(Embedding Space), but the number of dimensions is a hyperparameter you can tweak.
+
+Training makes better Representation of the categories - Representational Learning
+
+Quite often these same embeddings can be reused successfully for other tasks.
+Eg. In NLP task use 'Pretrained word embeddings', than training your own.
+
+Synonyms had very close embeddings, and semantically related words ended up clustered together 
+
+Unfortunately, word embeddings sometimes capture our worst biases.
+
+Implement word embeddings manually or use keras layer instead.
+
+Creating manually steps,
+1.embedding_matrix - Each category as a row.
+2.10 to 300 dimensions
+
+categories = tf.constant(["NEAR BAY", "DESERT", "INLAND", "INLAND"])
+cat_indices = table.lookup(categories)
+******You can use keras.layers.TextVectorization here. Use text_vectorization after adapt() 
+And then call this, 
+tf.nn.embedding_lookup(embedding_matrix, cat_indices)
+
+Or just call keras.layers.Embedding(trainable by default), this will internally create the embedding matrix.
+embedding = keras.layers.Embedding(input_dim=len(vocab) + num_oov_buckets,output_dim=embedding_dim)
+embedding(cat_indices)
+
+Putting it all together(Create a Keras layer which handles numerical + categorical features....)
+=================================================================================================
+regular_inputs = keras.layers.Input(shape=[8])
+*****use keras.layers.TextVectorization here. Use text_vectorization after adapt() *****
+categories = keras.layers.Input(shape=[], dtype=tf.string)
+cat_indices = keras.layers.Lambda(lambda cats: table.lookup(cats))(categories)
+*****Embedding layer*****
+cat_embed = keras.layers.Embedding(input_dim=6, output_dim=2)(cat_indices)
+*****Concatenate Regular and Categorical Embedding*****
+encoded_inputs = keras.layers.concatenate([regular_inputs, cat_embed])
+outputs = keras.layers.Dense(1)(encoded_inputs)
+model = keras.models.Model(inputs=[regular_inputs, categories],outputs=[outputs])
+
+One-hot encoding followed by a Dense layer (with no activation function and no biases) is equivalent to an Embedding layer.
+The Dense layer’s weight matrix plays the role of the embedding matrix.
+
+one-hot vectors of size 20 and a Dense layer with 10 ---------->>> We get only 10. So its wasteful to use more embedding dimensions
+
+Keras Preprocessing Layers:
+============================
+Keras Team is working:
+https://github.com/keras-team/governance/blob/master/rfcs/20190502-preprocessing-layers.md
+
+Feature Columns API(*****Check Notebook*****)--->> This will be replaced
+
+Preprocessing layers:(Uses adapt(), trainable=False(so these are mentioned outside the model))
+keras.layers.Discretization
+keras.layers.Normalization
+keras.layers.TextVectorization
+
+Embedding layers:(trainable=True)
+keras.layers.Embedding(Use TextVectorization before that)
+
+You should not use an Embedding layer directly in a custom preprocessing layer, if you want it to be trainable.Add it separately to your model
+If you want to create your own custom Preprocessing layer..Just subclass keras.layers.PreprocessingLayer(experimental) class with an adapt() method
+
+Preprocessing pipelines:
+------------------------
+normalization = keras.layers.Normalization()
+discretization = keras.layers.Discretization([...])
+pipeline = keras.layers.PreprocessingStage([normalization, discretization])
+pipeline.adapt(data_sample)
+
+The TextVectorization layer will also have options
+1.to output word-count vectors(Bag Of Words - BOW) instead of word indices.
+2.TF-IDF
+
+TF Transform:
+=============
+It may be preferable to perform preprocessing ahead of time.
+Speedup: The data will be preprocessed just once per instance before training, rather than once per instance and per epoch during training
+
+During training
+Small Data - cache()
+Large Data - Use Data Preprocessing pipeline in Apache Beam or Spark
+
+Problem: Suppose you want to deploy your model, you will need to add some preprocessing in your mobile app or browser --- maintenance nightmare
+Change the preprocessing logic, will need to update your Apache Beam code, your mobile app code, and your JavaScript code - training/serving skew
+
+Solution:
+What if you could define your preprocessing operations just once?--->> Enter TensorFlow Extended (TFX)
+
+Define a preprocess function
+
+import tensorflow_transform as tft
+def preprocess(inputs): # inputs = a batch of input features
+	standardized_age = tft.scale_to_z_score(median_age)							>>>>>>>Check this
+	ocean_proximity_id = tft.compute_and_apply_vocabulary(ocean_proximity)		>>>>>>>Check this
+	return {
+	"standardized_median_age": standardized_age,
+	"ocean_proximity_id": ocean_proximity_id
+	}
+
+TF Transform lets you apply this preprocess() function to the whole training
+set using Apache Beam(Use AnalyzeAndTransformDataset class in Apache Beam pipeline). 
+In the process, it will also compute all the necessary statistics over the whole training set: in this example, the
+mean and standard deviation of the housing_median_age feature, and the vocabulary for the ocean_proximity feature. 
+The components that compute these statistics are called analyzers.
+
+Importantly, TF Transform will also generate an equivalent TensorFlow Function(which has these constants) that you can plug into the model you deploy.
+
+TFDS:
+=====
+Simpler to split images, labels by using as_supervised=True.
+

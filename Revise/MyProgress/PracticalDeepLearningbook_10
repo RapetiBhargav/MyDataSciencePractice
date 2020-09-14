@@ -1,0 +1,117 @@
+10.AI in the browser using TF.js and ml5.js
+
+JavaScript-based deep learning libraries that can run our trained model within users’ browsers
+WebGL to run computations on the GPU.
+WebGL provides GPU-accelerated computations like image processing within the browser.
+Could run on a Node.js server on a CPU to provide server-based inferences
+To make TensorFlow.js even simpler to use, consider ml5.js
+
+TensorFlow.js Architecture:
+===========================
+It consists of two APIs: 
+1.the Operations API and 
+2.the Layers API.
+
+The Operations API provides access to lower-level operations such as tensor arithmetic and other mathematical operations. 
+The Layers API builds on top of the Operations API to provide layers such as convolution, ReLU, and so on.
+
+ml5.js uses TensorFlow.js to provide an even higher-level API along with several prebuilt models.
+
+We explore some rich built-in functionality contributed by the ml5.js community, which
+would otherwise take a lot of effort and expertise to implement directly on TensorFlow.js.
+
+Running Pretrained Models Using TensorFlow.js
+==============================================
+TensorFlow.js offers lots of pretrained models that we can directly run in the browser. 
+Some examples include MobileNet, SSD, and PoseNet.
+
+Import the MobileNet model.
+We can alternatively load a model using a JSON file URL(remember tf.js creates model.json)
+
+Model Conversion for the Browser
+================================
+This we already know. h5 to .model
+
+const path = 'https://storage.googleapis.com/tfjsmodels/tfjs/mobilenet_v1_1.0_224/model.json';
+const mobilenet = await tf.loadLayersModel(path);
+
+mobilenet.load() or tf.loadLayersModel()
+
+TensorFlow.js also allows us to train models directly in the browser. 
+Example: Training a model using a webcam feed.
+
+Note:Loading a model locally requires running a web server.
+
+Training in the Browser
+=======================
+Like Google’s Teachable Machine
+Exploit transfer learning to make the training process faster
+
+To build this, we need a feature embeddings, and then attach a network that converts these features into a
+prediction. Finally, we can train it with webcam inputs.
+
+// Get a specific layer closer to output.Make it the output of the model
+const layer = mobilenet.getLayer('conv_pw_13_relu');
+
+// Create a new feature extraction model
+featureExtractionModel = tf.model({inputs: mobilenet.inputs, outputs: layer.output});
+
+Add a trainableModel on this featureExtractionModel.
+ 
+const trainableModel = tf.sequential({
+	layers: [
+		tf.layers.flatten({inputShape: [7, 7, 1024]}),
+		tf.layers.dense({
+		units: 64,
+		activation: 'relu',
+		kernelInitializer: 'varianceScaling',
+		useBias: true
+	}),
+	tf.layers.dense({
+	units: 2,
+	kernelInitializer: 'varianceScaling',
+	useBias: false,
+	activation: 'softmax'
+	})]
+});
+
+Capture images from webcam.
+Add them to a training set and label them.
+Finally Training
+
+GPU memory allocated by TensorFlow.js is not released
+Solution: Use tidy() to do memory management for us.
+For CPU not needed.
+
+Instead of doing all these steps which we have just mentioned ....Just use ml5.js !!!
+
+ml5.js is a higher abstraction of TensorFlow.js that makes it easy to use existing pretrained deep learning models.
+ml5.js reduces the steps related to preprocessing, postprocessing
+
+Applications:
+PoseNet: Problem of Keypoint detection
+pix2pix : translate a picture from one setting to another
+pix2pix is an example of a conditional GAN.
+pix2pix works by training on pairs of images.
+
+Benchmarking and Practical Considerations:
+Two factors play a large role in how users experience our product: 
+1.the model size
+Pick the smallest model for the job
+Among pretrained networks, EfficientNet, MobileNet, or SqueezeNet tend to be the smallest
+
+2.the inference time based on the hardware - Chrome browser etc
+
+Case Studies:
+Semi-Conductor - PoseNet, Orchestra
+TensorSpace - Open the CNN blackbox
+Metacar - simulated 2D environment to train toy cars with reinforcement learning, all in the browser
+Airbnb’s Photo Classification - driver’s license or passport. TensorFlow.js to detect sensitive images and prevent
+their upload to the server.
+GAN Lab - Uses TF.js to understand GANs(something like GAN playground)
+
+
+
+
+
+

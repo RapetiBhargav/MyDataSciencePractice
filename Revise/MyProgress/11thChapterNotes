@@ -1,0 +1,252 @@
+Vanishing gradients(model never converges) and exploding gradients problem(model diverges).
+This is when the gradients grow smaller and smaller, or larger and larger, when flowing backward through the DNN during training.
+
+millions of parameters==> overfitting, esp. if you have less training data
+
+Suspects--> Activation fn. + weight initialization(normally distributed)
+During ForwardProp, Variance keeps increasing , and activation func. saturates at the top layers.(made worse with sigmoid fn. whose mean is 0.5)
+When inputs become large(+ve or -ve), fn. saturates at 0 or 1., so when back prop starts, there is no gradient to propogate back.(signal dies out or explodes)
+
+variance of o/ps = variance of i/ps (amplifier analogy)
+variance of gradients should be equal in each pass.
+
+For a layer
+number of i/ps - fan-in
+number of neurons - fan-out
+
+Normal distribution with mean 0 and variance σ2 = 1/fanavg
+Or 
+Uniform distribution between −r and + r, with r = sqrt(3/fanavg)
+
+Glorot(Normal(default uses fav-avg)/Uniform, Sigmoid, tanH, Softmax),
+He(Normal(default uses fav-in, you can use fav-avg using VarianceScaling)/Uniform, ReLU and variants)
+LeCunn(only normal(uses fan-in), SELU, fan-in=fan-out)
+
+σ2 will change for all of these initializers
+
+Types of ReLU: Leaky Relu, RRelu, PRelu, ELU(exponential linear unit, alpha=1), ........... finally SELU(Scaled ELU)
+
+If all the dense layers use SELU...the n/w will self-normalize: the output of each layer will tend to
+preserve a mean of 0 and standard deviation of 1 during training
+
+Conditions to self-normalize:
+1.The input must be standardized.
+2.weight initializer should be LeCun
+3.Only sequential architecture(means not for wide and deep n/w's)
+4.Mostly for dense layers, but can be used for CNN aswell
+
+SELU > ELU > leaky ReLU (and its variants) > ReLU > tanh > logistic
+
+Batch Normalization:
+=====================
+The technique consists of adding an operation in the model just before or after the activation function of each
+hidden layer.
+
+BN standardizes its inputs, then rescales and offsets them.
+Result is a scaled and shifted version.
+
+Batch Normalization acts like a regularizer, reducing the need for other regularization techniques (such as dropout)
+
+BN layer can be fused with the previous layer.
+If we replace the previous layer’s weights and biases (W and b) with the updated weights and biases (W′ and b′),  --->> After training
+we can get rid of the BN layer (TFLite’s optimizer does this automatically)
+
+“non-trainable” really means “untouched by backpropagation.”
+
+Momentum -- This hyperparameter is used by the BatchNormalization layer when it updates the
+exponential moving averages;
+value v (i.e., a new vector of input means or standard deviations computed over the current batch)
+
+Axis is by defaulf -1 ..or use [1,2]
+When the input
+batch is 2D (i.e., the batch shape is [batch size, features]), this means that each input
+feature will be normalized based on the mean and standard deviation computed
+across all the instances in the batch.
+
+For a custom layer : Add a 'training' argument to the call() method and use this argument in the method to decide what to compute.
+
+Gradient Clipping: Use in SGD() otimizer
+==================
+Used instead of BN in RNN(tricky to use)
+Original gradient vector [0.9, 100.0], clipped changes direction.
+So use clipnorm=1.0, to not change direction..[0.00899964, 0.9999595],
+
+clipnorm,clipvalue..try various thresholds on Validation set and using TensorBoard You can track the size of gradients.
+
+Unsupervised Pretraining:
+=========================
+If you can gather plenty of unlabeled training data, you can try to use it to train an unsupervised model, 
+such as an autoencoder or a generative adversarial network
+Then you can reuse the lower layers of the autoencoder or the lower layers of the GAN’s discriminator, 
+add the output layer for your task on top, and finetune the final network using supervised learning	
+
+Unsupervised pretraining (today typically using autoencoders or
+GANs rather than RBMs) is still a good option when you have a complex task to
+solve, no similar model you can reuse, and little labeled training data but plenty of
+unlabeled training data.
+
+Greedy layer wise pretraining(step by step).......but now a days we use auto-encoders or GAN(train the supervised model in one-shot)
+
+OR...Use Pretraining on an auxillary task.
+		 =================================
+Seen example of images.
+Seen example in NLP(masking out few words from a corpus, making that the label...it will learn language) -->> self-supervised learning(automatically generate labels from the data itself)
+
+Coursera Course:
+=================
+Regularization Techniques
+1. Intuition of how L1(makes w's sparse),L2(widely used) regularization works.[2 analogies, 1.wa..since z becomes smaller, the activation acts linear 2.Network will become simpler]
+
+2. Inverted Dropout(used only during training)....Inverted means activations are divided by keep_prob
+a=a/keep_probs during training or a=a*keep_probs during testing.
+
+Gradient Checking: Dont't use in training - Only to debug
+Does'nt work with drop-out, since you cannot calculate some of the gradients then (or keep_prob=1 for Gradient Checking and later implement drop-out)
+
+Batch Gradient Descent: Entire training set, you can only take one gradient step with one epoch.
+Mini Batch Gradient Descent: Mini batch of training set, you can only take many gradient steps with one epoch.
+Stochastic Gradient Descent: Mini Batch GD with batch size=1.
+
+Make sure you mini-batch fits in the CPU/GPU memory.
+
+Exponentially weighted moving averages:
+
+Exponentially -->>(1-E)1/E=1/e
+
+Exponentially weighted moving averages--->> This is easier to calculate, only takes one variable in memory(compared to storing all variables and calculating average)
+
+Bias Correction: to fix the cold start in Exponentially weighted moving averages.No need to use this in GD with momemtum.
+
+Gradient Descent with Momentum:Basic idea is to calculate the exponential weighted average of your gradients(dw), and use that gradient to update the weights instead.(See pic)
+
+RMSProp -->> exponentially weighted averages of the squares of the gradients(dw2)..This allows us to penalize oscillations in vertical directions and accelerate movement in horizonal direction.(so increasing the learning rate is feasible)
+
+These are estimations of the mean and (uncentered) variance of the gradients.(Momentum and RMSProp)
+
+Adam Optimizer=GD with Momentum+GD with RMSProp
+You have to implement bias correction in Adam.
+
+ADAM-Adaptive Moment Estimation
+
+Learning Rate Decay: Suppose you are implementing a mini-batch GD.
+It will never converge , since we are using a fixed learning rate and there may be some noise in our mini-batch.
+So we need learning rate decay.
+Exponential decay, step decay etc.
+
+Problem of local optima:
+How we think about local optima - Points of zero gradient.
+It must be convex or concave...But all 20000 parameters cannot be convex or concave(chances are very low)
+Instead most points of zero gradient in a cost function are saddle points ---> Problem of plateaus.Here the training may take long. But Adam or RMSProp or momentum might help.
+
+Extra: Krish Naik
+==================
+AdaGrad - Different LR for each neuron and each hidden layer..based on different iterations. Now why do we need that?
+
+Dense feature and sparse feature(eg: BOW-Bag Of Words)...different features require different learning rates.
+
+By adding Momentum, it just solves the problems from AdaGrad...The result is RMSProp and AdaDelta.
+
+===============================================================================================================================================================
+Back to book:
+Optimizers:
+===========
+1.momentum optimization -->>use the SGD optimizer and set its momentum hyperparameter
+2.Nesterov Accelerated Gradient-->>NAG momentum optimization, measures the gradient of the cost function not at the local position θ but slightly ahead in the direction of the momentum. Helps reduce oscillations.
+3.AdaGrad-->>The algorithm decays the learning rate, but it does so faster for steep dimensions than for dimensions with gentler slopes. This is called an adaptive learning rate.
+The algorithm could correct its direction earlier to point a bit more toward the global optimum
+The learning rate gets scaled down so much that the algorithm ends up stopping entirely
+4.RMSProp-->>The RMSProp algorithm fixes this by accumulating only the gradients from the most recent iterations(It does so by using exponential decay in the first step)
+5.Adam -->>GD with Momentum+RMSProp
+6.Nadam optimization(Adam with Nesterov trick)
+7.Adamax- No good explaination on this
+
+Adaptive optimization methods (include AdaGrad,RMSProp, Adam, and Nadam optimization) or (Momentum and NAG)
+Your dataset may just be allergic to adaptive gradients.
+
+Jacobians-First Order derivatives
+Hessians- 2nd Order derivatives(Hard to compute)
+
+Learning Rate Scheduling:
+=========================
+Common learning schedules are:
+1. Power scheduling - after steps alpha,alpha/2,alpha/3alpha/4 etc. Schedule first drops quickly, then more and more slowly
+2. Exponential scheduling - slashing it by a factor of 10 every s steps
+3. Piecewise constant scheduling - a constant learning rate for a number of epochs(0.1 for 5, 0.001 for 50)
+4. Performance scheduling - Measure the validation error every N steps , reduce the learning rate by a factor of λ.
+5. 1cycle scheduling - LR increases , halfway thru again decreases.
+
+Implementing power scheduling in Keras is the easiest option:
+optimizer = keras.optimizers.SGD(lr=0.01, decay=1e-4) -->> decay is inverse of number of steps.
+
+All other learning schedules can be applied using callbacks in fit() method(define a function and call it in the callback)
+lr_scheduler = keras.callbacks.LearningRateScheduler(exponential_decay_fn)
+
+When you save a model, the optimizer and its LR get saved. But if your function is using a epoch, it won't be saved.(i.e it gets reset to 0)
+Solution: Set the fit() method’s 'initial_epoch' argument so the epoch starts at the right value.
+
+For Performance scheduling(i.e 4th one) use the ReduceLROnPlateau callback.
+lr_scheduler = keras.callbacks.ReduceLROnPlateau(factor=0.5, patience=5)
+It will multiply the learning rate by 0.5 whenever the best validation loss does not improve for 5 consecutive epochs
+
+Alternative: keras.optimizers.schedules.ExponentialDecay.....and pass this to an optimizer.This approach updates the learning
+rate at each step rather than at each epoch
+
+To avoid repetative code for layers:
+1. You can use For-Loops.
+2. Use Python’s functools.partial()
+
+Dropout:
+You can usually apply dropout only to the neurons in the top one to three layers (excluding the output layer).
+Total of 2**N possible networks
+We need to multiply each input connection weight by the keep probability (1 – p) after training.
+keras.layers.Dropout(rate=0.2)
+Make sure to evaluate the training loss without dropout (e.g., after training).
+If you are using SELU activation function , use alpha dropout. As regular dropout would break self-normalization.
+
+Monte Carlo Dropout:
+=====================
+Boosting the dropout model we trained earlier without retraining it.
+Averaging over multiple predictions with dropout on gives us a Monte Carlo estimate that is generally more reliable than the result of a
+single prediction with dropout off.
+The number of Monte Carlo samples you use (100 in this example) is a hyperparameter you can tweak
+
+y_probas = np.stack([model(X_test_scaled, training=True) --->> to use Dropout we need to use training=True.But its a problem with models using BN
+for sample in range(100)])  
+y_proba = y_probas.mean(axis=0)
+
+Here, we need to just subclass the Dropout layer and override the call() method(Here force its training argument to True.) 
+
+class MCDropout(keras.layers.Dropout):
+def call(self, inputs):
+return super().call(inputs, training=True)
+
+Similarly, you could define an MCAlpha Dropout class by subclassing AlphaDropout instead. 
+
+If you are creating a model from scratch, it’s just a matter of using MCDropout rather than Dropout. 
+But if you have a model that was already trained using Dropout, you need to create a new model that’s
+identical to the existing model except that it replaces the Dropout layers with MCDrop
+out, then copy the existing model’s weights to your new model.
+
+Gist: Basically we use training=True while using MCDropout...hence we need to be careful if our model uses BN layer..In which case use Subclassing instead.
+
+Useful when building a risk-sensitive application
+
+Max-norm: --- Need to see
+=========
+
+*****
+Code:
+=====
+erf(z)
+Returns the error function of complex argument.
+
+erfc(x[, out])
+Complementary error function, 1 - erf(x).
+
+erfcx(x[, out])
+Scaled complementary error function, exp(x**2) * erfc(x).
+
+Since we are using Denselayers, only patterns that occur at the same location can be reused (in contrast, 
+convolutional layers will transfer much better, since learned patterns can be detected anywhere on the image
+
+

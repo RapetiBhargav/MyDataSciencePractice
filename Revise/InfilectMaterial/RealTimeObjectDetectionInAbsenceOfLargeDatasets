@@ -1,0 +1,61 @@
+https://www.youtube.com/watch?v=x8-272AidXo&t=1364s
+
+How to Learn a Real-Time Object Detector with Less Data:
+Takeaways:
+1.Technique and 
+2.Case Study to efficiently extract objects from pictures and videos.
+
+https://www.youtube.com/watch?v=1boc13E1SKk&t=2536s
+Personal content discovery and product discovery.
+Heuw- B2C product for content and product discovery.
+
+VDAS- Visual design and attention score for display ads.
+
+Advertisers and suppliers.
+
+AWS DeepLens:
+=============
+Creating and deploying a project templete on AWS deeplens
+=========================================================
+Goto deeplens, select project, select existing object detection templete and deploy to deeplens device, view output.
+
+Extending a model with AWS deeplens:
+============================================
+1.Creating and deploying an AWS deeplens project.
+2.Capture events from your AWS deeplens model and put them in a Queue for further processing.
+3.There are many usecases to extend AWS deeplens models using AWS lambda functions(Eg: such as sending sms alerts, opening doors, populating analytical dashboards).
+
+AWS deeplens>>Resources>>Devices>> select device from the list.
+Select the MQTT topic name at the bottom(See the pic.)
+Go to AWS greengrass>>Test..paste the MQTT topic name here. Subscribe to this topic.Verify you see some messages from the device.
+Use the AWS greengrass console to create a rule to send messages to an sqs queue that is ready for polling.
+Go to AWS greengrass>>Act>>Create a rule>> here go to actions section , select SQS queue.(see pic for other options)
+
+
+Build a deeplens project with AWS Sagemaker
+============================================
+Create a model using AWS Sagemaker and importing into AWS deeplens.
+AWS deeplens is a fully programmable video camera. It also comes with pretrained models.
+1.How to setup a Sagemaker notebook instance
+2.Import and configure an external notebook in Amazon Sagemaker.
+3.Import model from Sagemaker into DeepLens.
+
+Go to Sagemaker console, create a notebook instance, create an IAM role.The IAM role you will create will provide access to S3 bucket.
+Import a model from github link it thru S3 bucket.
+Import this model into AWS deeplens.
+You can now include this in a project alongside an AWS lambda function and deploy it to your deeplens device for local inference.
+
+Import models into projects and deploy into deeplens.
+
+Using AWS IOT and a lambda function we are streaming the inference to the cloud, from there we 
+are populating a dynamoDB table from where the amazon echo is reading and also we have a restful function which calls philips hue.
+
+Lambda function:
+Preprocessing , inference and output
+
+
+
+
+
+
+

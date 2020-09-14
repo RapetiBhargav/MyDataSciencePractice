@@ -1,0 +1,132 @@
+Applications of CV:
+====================
+Object tracking using the Camshift algorithm
+Harry Potters invisibility Cloak
+Watermarking Images with OpenCV - Automate the watermarking task
+
+About Project:
+===============
+OCR - Read text from images
+Apl- Handwritten Fraud Detection, information from the cheques, Receipt recognition to tract the customer buying habits.
+
+Machine Inspection:Rapid Parts inspection for quality assurance using stereo vision- Use 3D x-ray to find the defect
+Retail - Object recognition for Automated checkout lanes.
+
+Match move - Merging CGI with live action footage.
+
+Infilect:
+==========
+We are a Visual Intelligence company.
+we work with major Retailers/Retail brands to provide visual intelligence from instore operations.
+Every brand or manufacturer that supplies products and puts their products in retail outlets have these major questions.
+1.How does my brand stand out in a retail store among all my competition.Whether I get better visibility accross my competition.
+How are my products in everymulti-brand retail is executed.
+How are customers interacting with my product?
+Are my product's promotions executed well in every retail store.
+
+Every brand have these questions , and they don't have enough insights in understanding these from multiple retail outlets.
+What they rely now is on POS information which tells what are the product that are selling and what are not selling.
+But what we are trying to provide is complete visual intelligence of exactly what is happening in a retail outlet and brands get benifitted out of them.
+
+So what do brands do today?
+Today brands send a small set of manual auditors who visit these stores using a salesforce automation application.
+They go and count all the products , they see if the merchandising material is implemented properly or not and then take these as inputs.
+This is done in a small subset of stores(like 5 to 10% where is their brand is actually there in the store)
+This process is pretty slow as well as error prone.
+What we are converting this is into a completely digital and fast approach using artificial intelligence.
+So we equip these salesmen and merchandizer of the brand with a mobile app, so all they have to do is go to the store, click 
+photos of the shelfs as well as merchandizing material.All these photos come to our cloud and we automatically analyze these photos using computer vision algorithms and identify every single SKU that is present in the store, how they are present, how the merchandizing meterial is executed and present all these data to the brands.
+
+Architecture:
+The salesman/merchandizer can use and take photos or we can use instore cameras.
+And the photos that are taken from these go to our cloud where we have algorithms which can recognize the products as well as merchandising   
+material for that brand and the competition.(so its not just the brand we also give competitive intelligence)
+And that is shown thru a realtime dashboard where all these metrics are analysed by the stakeholders- these can be brand managers and category managers. They act upon stores where the metrics are not good and make sure that their product execution is better.
+
+Some of the KPIs that we provide to brands.
+We take photos, we stitch then and then we analyse them into every single product. We provide presence of different sku's.
+What are the number of facings? What share of shelf does a brand get?
+What are the sku's that are put of stock? Whether the planograms are implemented properly or not?
+Whether the secondary displays are implemented properly or not?
+How is the competition doing?What are the promotions and pricing the competition is having?
+
+So every single information a brand needs to know accross 1000's or lakhs of stores accross channels(hypermarkets, mini markets and even kirana stores)
+And we provide insights to brands in such a way that they can take action and make sure that the products get executed well.
+So that they can have lift in sales and also making sure their marketing ROI us properly realized.
+
+Using our algorithms , we have high accuracy - About 95% accuracy using image recognition
+
+2 case studies:
+===============
+
+
+Time for the model to train.
+SKU's and categories
+500 to 1000 sku's - 2 to 3 weeks to create a model.
+
+Derive deep insights from retail images and videos through Artificial Intelligence
+
+InfiArt is a first of its kind solution that gives objective feedback on how creatives will perform in real environments to creative designers and help them improve their marketing creatives.
+
+In addition to prescriptive feedback, InfiArt also provides instant consumer attention heat map that exactly shows where a consumers first glance falls when viewing the creative in the clutter of a real environment. InfiArt suggests design changes that can improve the design and make it stand out in the clutter of real world environments.
+
+Nielsen study points that over 70% of decision making happens at the shelf and it is absolutely critical for brands to own this decision making moments with a strong retail strategy.
+
+Eye level positioning can dramatically increase the sell through of your product. Are you missing out on it? Track secondary selling spaces your brand and your competitor occupies to bid for more or less space
+
+Work with in-store category managers to price your product competitively. Get real-time visibility into competitive pricing information of all your competitor products across all retail stores every day.
+
+Instantly discover planogram violation and work with category managers to quickly fix them.
+Discover stores that are less accountable to your brands and improve relationship with them to boost sales.
+
+Flag competing products that try to cannibalise your branding with similar packaging that can deceive your customers.
+
+Shopper attention flow.
+Design planogram displays that stands out and grabs customer attention quickly to convey the right marketing message
+
+https://infilect.com/infieye/
+https://aws.amazon.com/deeplens/
+Infilect has created an industry leading smart camera (based on AWS Deeplens) that captures and processes videos in real-time in the device and send interesting events to the store owner.
+Start getting deep insights about whats happening in your store on your mobile device instantly after you deploy our solution. Just plug it in the entrance and exit of the store.
+
+USECASES:
+==========
+A comprehensive suite of insights that provide unprecedented visibility into retail reality
+
+ACCURATE FOOTFALL ANALYTICS:
+Accurate number of visitors and time of stay can help you improve on staff allocation, product placement, product stocking and more.
+
+CUSTOMER DEMOGRAPHY ANALYTICS:
+Understanding who your customers are helps you provide product selections tailored to their needs. 
+
+UNIQUE, REPEAT VISITORS:
+Using advanced face recognition technology, automatically identify if a visitor is a new visitor or a repeat visitor.
+Delight repeat visitors with personalised offers to increase sales.
+
+QUEUE OVERLOAD ALERTS:
+Automatically identify overloaded queue and send alerts to floor managers to increase billing staff.
+
+PASS BY TRAFFIC:
+Every customer who passes by your store but does not enter is a lost opportunity.
+Improve your front facing ads, sale information or dress up your mannequins and attract more shoppers.
+
+STORE HEAT MAPS:
+Accurately track every customer across your store and generate heat maps for your store layout to know which parts of your store attracts more customers.Gain understanding of high performing locations in store.
+
+SHELF REPLENISHMENT ALERTS:
+Computer vision technology can detect products at SKU level and trigger custom alerts based on product availability to the right category manager.
+
+Q.) How did you capture the training dataset?
+We took pictures of products from stores and labeled them.
+In some cases , the brands have provided us with the images and the images of their competitor products.
+Q.) Will you train the competitor products as well?
+Yes. In some cases we label the competitor products as well, so that our model would be able to distinguish with our product.
+Q.) What if you get some new products? Will you train the model from scratch?
+Q.) How did you label the dataset?
+Q.) What model did you use?
+Q.) How long did you train your model?
+Q.) What metrics did you use to evaluate your model?
+Q.) Where did you deploy the model?
+Q.) What are the challenges you faced?
+Q.) Source of input? instore cameras or mobile app?
+Q.) How do you present these insights to your stakeholders?

@@ -1,0 +1,393 @@
+Deep Learning in Object Detection
+==================================
+# convert the image to grayscale
+image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+8 real-world use cases of computer vision
+From various industries, such as healthcare, security, surveillance, and manufacturing.
+
+3 chapters dedicated to practical use cases
+starting from image/video acquisition to building a data pipeline, model training, and deployment.
+
+Chapter 10, provides step-by-step instructions for building machine learning–based computer vision applications on the three popular
+cloud infrastructures: Google Cloud Platform, Amazon AWS, and Microsoft Azure.
+
+OpenCV to manipulate images
+OpenCV, originally developed by Intel and written in C++, is an open source
+computer vision and machine learning library consisting of more than 2,500 optimized
+algorithms for working with images and videos.
+
+Both TensorFlow and OpenCV provide Python interfaces to access their low-level functionality. Although TensorFlow and OpenCV provide
+interfaces in other programming languages, such as Java, C++, and MATLAB, we will use Python as the primary language.
+
+OpenCV is written in C/C++, and because it’s platform dependent, the installation
+instructions vary from OS to OS. In other words, OpenCV needs to be built for your
+particular platform/OS to run smoothly. We will use Python bindings to call OpenCV for
+any image processing needs.
+
+Core Concepts of Image and Video Processing
+============================================
+This chapter introduces the building blocks of an image and describes various methods to manipulate them.
+
+A video is a series of images or frames. Therefore, the technique of image processing also applies to video processing.
+I will show you, step-by-step, how to write code to load images from the computer’s disk, access pixels, manipulate them, and write
+them back to the disk.
+
+When you load an image, OpenCV creates a NumPy array.
+When you give the (x,y) coordinates, NumPy will return the values of colors of the
+pixel at those coordinates as follows:
+For a grayscale image, the returned value from NumPy will be a single value between 0 and 255.
+For a color image , a tuple, OpenCV maintains the RGB sequence in the reverse order.
+
+***OpenCV stores the colors in BGR sequence and not in RGB sequence.
+
+image = cv2.imread(image_path)
+cv2.imshow("My Image", image)
+cv2.waitKey(0)
+waitKey() function allows the program not to terminate immediately and wait for the user to press any key.
+
+NumPy array consists of three dimensions: height × width × channel.
+How to manipulate these images : Manipulate this numpy array.
+cv2.imwrite("rectangle.jpg", image)
+
+Techniques of Image Processing
+===============================
+Normally ingested from their source, such as cameras, files stored on a computer disk, or streams from another application.
+We may need to resize, rotate, or change their colors.
+
+Resizing - aspect ratio = width/height
+resizedImage = cv2.resize(image, dimension, interpolation=cv2.INTER_AREA)
+resizedWithFactors = cv2.resize(image, None, fx=1.2, fy=1.2, interpolation=cv2.INTER_LANCZOS4) - Factors by which you need to resize
+
+Interpolation algorithms are INTER_AREA, INTER_LINEAR(bilinear interpolation), INTER_CUBIC, and INTER_NEAREST.
+Interpolation is the process of calculating the pixel values when the image is resized.
+
+Translation and rotation:
+The warpAffine function is the OpenCV function that does the actual movement
+movedImage = cv2.warpAffine(image, translationMatrix/RotationMatrix, (image.shape[1],image.shape[0]))
+
+Cropping: Slice the numpy array
+
+Image Arithmetic and Bitwise Operations
+---------------------------------------
+When building computer vision applications, you will often need to enhance the properties of input images. 
+To do that, you may need to do certain arithmetic operations, such as addition and subtraction, and bitwise operations, 
+such as OR, AND, NOT, and XOR.
+
+There are two methods to handle this situation when the pixel value falls outside the range [0,255]:
+• Saturated operation (or trimming): In this operation, 230 + 30 ⇒ 255.				>>>>>OpenCV
+• Modulo operation: Here it performs a modulo like this: (230+30) % 256 ⇒ 4.		>>>>>Numpy
+
+You can perform arithmetic operations by using both OpenCV and NumPy’s built-in functions. 
+However, they handle the operations differently.
+OpenCV’s addition is a saturated operation. On the other hand, NumPy performs a modulo operation.
+Note the difference between NumPy and OpenCV as both these two techniques yield different results
+
+Addition:
+cv2.add() and cv2.addWeighted(). Image should be resized(to same dimensions) inorder to add.
+
+Subtraction:
+This property is useful in detecting any change/alteration in an image.
+Another reason for subtracting images is to level any uneven sections or shadows..
+
+Bitwise Operations:
+In image processing, for grayscale binary images, the pixel value 0 means off and a value greater than 0 means on.
+cv2.bitwise_and/or/xor(imageArray1, imageAyyar2)
+
+Masking:
+--------
+Masking is one of the most powerful techniques in computer vision. Masking refers to the “hiding” or “filtering” of an image.
+When we mask an image, we hide a portion of the image with some other image.
+In other words, we put our focus on a portion of the image by applying a mask on the remaining portion of the image.
+
+The technique of masking is applied in the smoothing or blurring of an image and in detecting the edges and contours within the image. 
+The masking technique is also used in object detection that we will explore later in this book.
+
+In OpenCV, the image masking is performed by using a bitwise AND operation
+Marking is one of the most commonly used image processing techniques for computer vision. 
+We will learn more about its practical applications in subsequent chapters on machine learning and neural networks.
+
+Splitting and Merging Channels:
+-------------------------------
+cv2.split(natureImage) and merge()
+Splitting and merging are helpful image processing techniques to perform feature engineering for machine learning.
+
+Noise Reduction Using Smoothing and Blurring
+--------------------------------------------
+Smoothing, also called blurring, is an important image processing technique to reduce
+noise present in an image. There are generally the following types of noise.
+• Salt and pepper noise: Contains random occurrences of black and white pixels
+• Impulse noise: Means random occurrences of white pixels
+• Gaussian noise: Where the intensity variation follows a Gaussian normal distribution
+
+Mean Filtering or Averaging:
+-----------------------------
+Sliding window : Typically, this kernel is taken as an odd number so a definite center can be calculated. 
+The larger the kernel size, the blurrier the image will become.
+The function cv2.blur(img,kernal) is used to blur an image by using mean filtering or averaging technique.
+
+Gaussian Filtering:
+---------------------
+Gaussian filtering is one of the most effective blurring techniques in image processing. This is used to reduce Gaussian noise.
+OpenCV provides a function, cv2.getGaussianKernel()
+
+Median Blurring:
+----------------
+Median blurring is an effective technique for reducing salt-and-pepper type of noise.
+Median blurring is similar to mean blurring except that the central value of the kernel
+is replaced by the median of the surrounding pixels.
+
+Bilateral Blurring:
+--------------------
+The previous three blurring techniques yield blurred images with the side effect that we
+lose the edges in the image. To blur an image while preserving the edges, we use bilateral
+blurring, which is an enhancement over Gaussian blurring. Bilateral blurring takes two
+Gaussian distributions to perform the computation
+cv2.bilateralFilter()
+
+Binarization with Thresholding:
+--------------------------------
+Convert a grayscale image into a binary image with the help of a technique called thresholding.
+
+The binarization technique is used to extract prominent information from the image, e.g., to extract characters 
+in optical character recognition (OCR) from a scanned document.
+
+Simple Thresholding: Inverse of binarization, in which case the pixels greater than the threshold are set to 0
+(T, binarizedImage) = cv2.threshold(image, 60, 255, cv2.THRESH_BINARY)
+
+If you are processing a large number of images and you want to adjust the threshold values based on the image type
+and intensity variations, the simple threshold may not be the ideal method.
+So use Adaptive thresholding and the Otsu method instead.
+
+Adaptive Thresholding:  Binarize a grayscale image that has a varying degree of pixel intensity
+# Binarization using adaptive thresholding and simple mean
+binarized = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 7, 3)
+# Binarization using adaptive thresholding and Gaussian Mean
+binarized = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 3)
+
+Otsu’s Binarization: Otsu’s method determines an optimal global threshold value from the image histogram. 
+We will learn more about histograms in the next chapter. For now, just think of the histogram as the frequency distribution of pixel values.
+To perform Otsu’s binarization, we pass cv2.THRESH_OTSU as an extra flag in the cv2.threshold() function.
+
+Binarization is a useful image processing technique to extract prominent features from images.
+
+Gradients and Edge Detection
+------------------------------
+Edge detection involves a set of methods to find points in an image where the brightness of pixels changes distinctly.
+We will learn two methods for finding edges in an image: 
+1.finding gradients(Sobel Derivatives and Laplacian Derivatives)- We need to apply blur first and then apply gradients
+Sobel Derivatives:(Gaussian smoothing and Sobel differentiation)
+================================================================
+sobely = cv2.Sobel(image,cv2.CV_64F,0,1,ksize=3)	>>>>>If you change ksize=-1 , then its Schar 
+sobely = np.uint8(np.absolute(sobely))				>>>>>Calculate the absolutes 
+We perform derivatives either in the horizontal or vertical direction by passing the arguments xorder and yorder, respectively.
+Laplacian Derivatives:
+======================
+The Laplacian operator calculates the second derivative of the pixel intensity function to determine the edges in the image.
+laplace = cv2.Laplacian(image,cv2.CV_64F)
+laplace = np.uint8(np.absolute(laplace)) 			>>>>>Calculate the absolutes 
+We passed the CV_64F data type to hold the possible negative values of gradients when the transitions from white to black happen.
+
+2.Canny edge detection.
+canny = cv2.Canny(image, 50, 170) >>>>min and max thresholds set here.
+Its a Multistep process
+Handles blur+sobel gradients in x and y axis+applies thresholding to determine edges.
+
+Contours
+========
+Contours are curves joining continuous points of the same intensity. 
+Determining contours is useful for object identification, face detection, and recognition.
+
+To detect contours, we do the following:
+1. Convert the image to grayscale.
+2. Binarize the image by using any of the thresholding methods.
+3. Apply the Canny edge detection method.
+4. Use the findContours() method to find all the contours in the image.
+5. Finally, use the drawContours() function to draw contours, if needed.
+
+(contours, hierarchy) = cv2.findContours(canny,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)	>>> There are different options here.
+
+We will use most of these image processing techniques later , especially
+when we learn about feature extraction and engineering for machine learning.
+
+Chapter 4: Building a Machine Learning–Based Computer Vision System
+=====================================================================
+Images are processed across a set of components performing various types of transformations that result in a final product. 
+This process is known as the image processing pipeline or computer vision pipeline.
+
+The commonly used transformations are image resizing, color manipulation, translation, rotation, and cropping. 
+Other advanced transformations that help in feature extraction include image binarization, thresholding, and gradient and edge detection.
+
+In the wheel example, we had only one feature, but in actual practice, there may be
+a large number of features, such as color, contour, edges, corners, angle, light intensity,
+and many more. The more distinguishing features you extract, the better your model will be.
+
+For most machine learning algorithms, we will need to extract features and provide it to the algorithm being considered for model training. Some deep learning algorithms, such as convolutional neural networks (CNNs), automatically extract features and then
+train the models.The following section discusses various methods of feature extraction from images. We will write code using Python and OpenCV to work through the examples of feature extraction.
+
+Color Histogram:
+The histogram could be used as features for your machine learning algorithms. There is another interesting use of histograms, which is to enhance the quality of the image. The technique to enhance an image by using a histogram is called histogram equalization.
+
+How to Calculate a Histogram -->>>cv2.calcHist()
+We will use Python and OpenCV to calculate a histogram, and we will use pyplot from
+the Matplotlib package to plot the histogram graph.
+
+Grayscale Histogram, RGB Color Histogram
+
+Histogram equalization: It's an image processing technique to adjust the contrast of an image. It is a method of redistributing the pixel
+intensities in such a way that the intensities of the under-populated pixels are equalized to the intensities of over-populated pixel intensities.
+cv2.equalizeHist()
+
+GLCM
+The gray-level co-occurrence matrix (GLCM) is the distribution of simultaneously
+occurring pixel values within a given offset. An offset is the position (distance and
+direction) of adjacent pixels. As the name implies, the GLCM is always calculated for a
+grayscale image.
+The GLCM calculates how many times a pixel value i co-exists either horizontally,
+vertically, or diagonally with a pixel value j.
+
+The importance of the GLCM is that it provides information on spatial relationships
+over an image. This differs from a histogram because the histogram does not provide any
+information about the image size, pixel location, or their relationship.
+Although the GLCM is such an important matrix, we do not directly use it as a feature
+vector for machine learning. We calculate certain key statistics about the image using the
+GLCM, and those statistics are used as features for any machine learning training.
+
+skimage.feature as sk
+sk.greycomatrix()
+glcm = sk.greycomatrix(image,[2],[0, np.pi/2])
+dissimilarity = sk.greycoprops(glcm, prop='dissimilarity')  >>> You can have many statistics - ASM, enerygy, correlation
+
+HOGs:Histograms of oriented gradients (HOGs) - Used for Object detection.
+HOGs describe the structural shape and appearance of an object in an image. The HOG algorithm computes
+the occurrences of gradient orientation in localized portions of the image.
+How this works is very overwhelming - Don't need to know.
+
+We will use the scikit-image library to calculate the HOG of an image. The subpackage, feature, within the package skimage of the scikit-image(skimage) library provides a convenient method to calculate HOG.
+
+(HOG, hogImage) = sk.hog(image, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=True, transform_sqrt=True,
+						block_norm="L2-Hys", feature_vector=True)
+
+It is worth mentioning that the hog() function generates a histogram of very high dimensionality.
+It is, therefore, extremely important to pay attention to the parameters and resize your image appropriately to reduce the output dimensions.
+
+LBP: Local binary patterns (LBP) is a type of feature descriptor for image texture classification.
+This approach of calculating an LBP feature vector allows us to capture finer details of the image texture.
+Steps:
+======
+1.Compare central pixel with all neighbouring pixel.Replace central pixel with decimal value.
+2.For each pixel in the image, we repeat the previous steps to obtain the pixel values based on the neighbors’ pixels. 
+3.Finally, we calculate a histogram over the LBP array. This
+histogram is taken as an LBP feature vector.
+
+This approach of calculating an LBP feature vector allows us to capture finer details of the image texture.
+sk.local_binary_pattern(image, P, R, method='default')
+
+Sometimes LBP is used with HOG to improve object detection accuracy.
+How is feature selection different from feature extraction? Feature extraction is the process of creating features, 
+and feature selection is the process of utilizing a subset of features or removing unnecessary features. 
+Together, feature extraction and selection are referred to as feature engineering.
+
+Feature selection:
+===================
+How is feature selection different from feature extraction? 
+Feature extraction is the process of creating features, and feature selection is the process of utilizing a subset
+of features or removing unnecessary features. 
+Together, feature extraction and selection are referred to as feature engineering.
+Why feature selection?
+It has been statistically proven that there is an optimum number of features beyond
+which the model performance starts degrading.
+
+Many feature selection techniques:
+====================================
+Filtering: It's a process that allows you to do preprocessing to select the feature subset. 
+In this process, you determine a correlation between 2 features with statistical tests(Chi-square, Anova, Pearson's correlation etc).
+
+Wrapper Method: In the wrapper method, you use a subset of features and train the model. Evaluate and based on that subset and retrain.
+Forward selection, Backward elimination, Recursive feature elimination
+Recursive feature elimination: In the recursive feature elimination process, we repeatedly create models and set aside the best or the
+worst-performing feature at each iteration. The features are ranked either by their coefficients or by feature importance, and the least
+important features are eliminated. Recursively, we create new models with the leftover features until all features are exhausted.
+
+Embedded Method: In an embedded method, the feature selection is done by the machine learning
+algorithm while the model is being trained. LASSO and RIDGE regularization methods
+for regression algorithms are examples of such algorithms where the best suitable
+features contributing to the model accuracy are evaluated.
+Since the model itself evaluates the feature importance, this is one of the least
+expensive methods of feature selection.
+
+Discussed in the end are Training(Unsupervised and Supervised) and Deployment.
+Unsupervised learning is used to cluster or group a dataset. Another application of
+unsupervised learning is to create labels for your supervised learning algorithms.
+
+https://medium.com/@jonathan_hui/understanding-feature-pyramid-networks-for-object-detection-fpn-45b227b9106c
+Understanding Feature Pyramid Networks for object detection (FPN)
+=================================================================
+It replaces the feature extractor of detectors like Faster R-CNN and generates multiple feature map layers (multi-scale feature maps) with better quality information than the regular feature pyramid for object detection.
+
+SSD makes detection from multiple feature maps. However, the bottom layers are not selected for object detection. They are in high resolution but the semantic value is not high enough to justify its use as the speed slow-down is significant. So SSD only uses upper layers for detection and therefore performs much worse for small objects.
+
+FPN provides a top-down pathway to construct higher resolution layers from a semantic rich layer.
+
+While the reconstructed layers are semantic strong but the locations of objects are not precise after all the downsampling and upsampling. We add lateral connections between reconstructed layers and the corresponding feature maps to help the detector to predict the location betters. It also acts as skip connections to make training easier
+
+we upsample the previous layer by 2 using nearest neighbors upsampling.
+Then we add them element-wise. We apply a 3 × 3 convolution to all merged layers. This filter reduces the aliasing effect when merged with the upsampled layer.
+
+FPN with RPN
+=============
+FPN is not an object detector by itself. It is a feature extractor that works with object detectors.
+
+A 3 × 3 convolution filter is applied over the feature maps followed by separate 1 × 1 convolution for objectness predictions and boundary box regression. These 3 × 3 and 1 × 1 convolutional layers are called the RPN head.
+
+It works with one feature map layer to create ROIs. We use the ROIs and the feature map layer to create feature patches to be fed into the ROI pooling.
+
+Based on the size of the ROI, we select the feature map layer in the most proper scale to extract the feature patches.
+The formula to pick the feature maps is based on the width w and height h of the ROI.
+
+We apply the ROI pooling and feed the result to the Fast R-CNN head 
+
+Segmentation: Didnt understand this part
+
+Conclusion:
+Placing FPN in RPN improves AR (average recall: the ability to capture objects) 
+Top-down pathway plus lateral connections improve accuracy by 8 points on COCO dataset. For small objects, it improves 12.9 points.
+
+https://www.youtube.com/watch?v=nDPWywWRIRo
+13:09 - Used FCN
+Semantic Segmentation:
+----------------------
+How do you develop training data for this? Semantic Segmentation
+What is the loss function? We put a cross entropy loss on every pixel of the output.
+Instead of FCN with same spacial features - computationally ex[pensive
+Design a n/w with a bunch of convolution layers , with downsampling and upsampling inside the network.
+Types of upsampling:
+--------------------
+1.Nearest Neighbour
+2.Bed of Nails
+3.Max Unpooling - Use positions from the pooling layer, since there is symmetry between the 2 portions of the network.
+These 3 are not learnable upsampling - They are kind of a fixed function
+4. Learnable Upsampling: Transpose Convolution.
+
+Object Detection:
+-------------------
+@35:48
+Weighting between the 2 losses
+Human Pose estimation:
+
+@51:35
+Does the offset have to be inside the region of interest?
+Ans:Final prediction boxes can be outside the Region Of Interest(ROI)
+
+Rather than processing each ROI seperately, instead we are going to run the entire image through some convolutional layers all at once.
+So we get a high resolution feature map corresponding to the entire image.
+Projecting the region proposals onto this convolutional feature map.
+And then taking crops from the convoluational feature map corresponding to each proposal
+
+@59:45 
+Sometimes multi-task regularization 
+@01:01:45
+
+Region Based methods for Object detection: R-CNN, Fast R-CNN, Faster R-CNN
+Rather than doing independent processing for each of these potential regions,Instead we try to treat this like a regression problem
+and just make all the predictions all at once with some big convolution network.

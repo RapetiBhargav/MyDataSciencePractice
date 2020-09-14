@@ -1,0 +1,291 @@
+Tensorflow:
+
+Very similar to NumPy, but with GPU support.
+
+Computation graphs can be exported to a portable format, so you can train a
+TensorFlow model in one environment (e.g., using Python on Linux) and run it
+in another (e.g., using Java on an Android device).
+
+tf.keras, tf.data, tf.io,tf.signal
+
+TensorFlow includes another Deep Learning API called the Estimators API, but the TensorFlow team recommends
+using tf.keras instead
+
+Many operations have multiple implementations called
+kernels: each kernel is dedicated to a specific device type, such as CPUs, GPUs, or
+even TPUs (tensor processing units).
+
+If you do not want to use the Python API, there are C++, Java, Go, and Swift APIs(even a JavaScript)
+
+TensorFlow Extended (TFX), which is a set of libraries built by Google to productionize TensorFlow projects
+
+Google’s TensorFlow Hub provides a way to easily download and reuse pretrained neural networks. 
+You can also get many neural network architectures, some of them pretrained, in TensorFlow’s model garden.
+
+https://paperswithcode.com/
+
+A tensor is very similar to a NumPy ndarray: it is usually a multidimensional array, but it can also hold a scalar.
+
+tf.constant([[1., 2., 3.], [4., 5., 6.]]) # matrix
+tf.constant(42) # scalar
+t.shape
+t.dtype
+
+t[..., 1, tf.newaxis] --->> check this.
+
+magic method t.__add__(10),
+The @ operator was added in Python 3.5, for matrix multiplication: it is equivalent to calling the tf.matmul() function.
+
+tf.reduce_mean(), tf.reduce_sum(), tf.reduce_max(), and tf.math.log() 
+are the equivalent of 
+np.mean(), np.sum(), np.max() and np.log().
+
+The tf.reduce_sum() operation is named this way because its GPU kernel (i.e., GPU implementation) uses a reduce algorithm that does
+not guarantee the order in which the elements are added: because 32-bit floats have
+limited precision, the result may change ever so slightly every time you call this operation.
+
+***If you want to benefit from TensorFlow’s graph features, you should use only TensorFlow operations.
+
+The Keras API has its own low-level API, located in keras.backend.
+If you want to write code that will be portable to other Keras implementations, you should use these Keras functions.
+
+Type conversions:
+=================
+You can create a tensor from a NumPy array, and vice versa.
+NumPy uses 64-bit precision
+TensorFlow uses 32-bit precision
+
+So when you create a tensor from a NumPy array, make sure to set dtype=tf.float32.
+Type conversions can significantly hurt performance. To avoid this, TensorFlow does not perform any type conversions automatically: it just raises an exception
+Use tf.cast() when you really need to convert types.
+
+tf.constant([[1., 2., 3.], [4., 5., 6.]]) # constant, immutable
+v = tf.Variable([[1., 2., 3.], [4., 5., 6.]]) #variable
+
+Use assign() to modify tf variables in place.
+v.assign(2 * v)
+v[0, 1].assign(42) # => [[2., 42., 6.], [8., 10., 12.]]
+v[:, 2].assign([0., 1.]) # => [[2., 42., 0.], [8., 10., 1.]]
+v.scatter_nd_update(indices=[[0, 0], [1, 2]], updates=[100., 200.])
+
+In practice you will rarely have to create variables manually, since Keras provides an add_weight() method that will take care of it for
+you. Mostly variable updates are automatic.
+
+Types of Data Structures in TensorFlow:
+=======================================
+tf.SparseTensor--> Efficiently represent tensors containing mostly zeros.
+s = tf.SparseTensor(indices=[[0, 1], [1, 0], [2, 3]],
+values=[1., 2., 3.],
+dense_shape=[3, 4])
+You can convert from sparse to dense using to_dense()
+
+tf.TensorArray --> List of tensors - must have the same shape and data type. 
+pops it from the array when you read it, and its replaced by 0's of same size.
+Use stack() to convert it into regular tensor.
+
+tf.RaggedTensor--> Lists of lists of tensors of different shapes sizes. to_tensor() method, it gets converted to a regular tensor by padding with 0,default value
+tf.string --> Unicode to UTF-8
+tf.sets --> tf.constant([[1, 2], [3, 4]]), represents 2 sets
+tf.queue --> Store tensors across multiple steps. Eg: FIFO, FIFOQueue, PriorityQueue, RandomShuffleQueue
+
+With tensors, operations, variables, and various data structures - Create all things CUSTOM :)
+-----------------------------------------------------------------------------------------------
+The Huber loss is not currently part of the official Keras API, but it is available in tf.keras(keras.losses.Huber class).
+
+Mention the custom loss function in compile.
+model.compile(loss=huber_fn, optimizer="nadam")
+
+Saving and Loading Models That Contain Custom Components: Generally, when you load a model containing custom objects, you need to map the names to the objects.
+model = keras.models.load_model("my_model_with_a_custom_loss.h5", custom_objects={"huber_fn": huber_fn})
+
+Function that creates a configured loss function:
+Like def create_huber(threshold=1.0):
+
+You need to specify the threashold after loading the model.
+model = keras.models.load_model("my_model_with_a_custom_loss_threshold_2.h5", custom_objects={"huber_fn": create_huber(2.0)})
+
+You can solve this by creating a subclass of the keras.losses.Loss class, and then implementing its get_config() method
+
+class HuberLoss(keras.losses.Loss):
+	__init__
+	call()
+	get_config(self):
+		base_config = super().get_config()
+		return {**base_config, "threshold": self.threshold}
+
+While compiling,
+model.compile(loss=HuberLoss(2.), optimizer="nadam")
+
+When you save the model, the threshold will be saved along with it.So no need to specify threshold when loading model.
+
+model = keras.models.load_model("my_model_with_a_custom_loss.h5", custom_objects={"HuberLoss": HuberLoss})
+
+When you save a model, Keras calls the loss instance’s get_config() method and saves the config as JSON in the HDF5 file. 
+When you load the model, it calls the from_config() class method on the HuberLoss class:
+
+Likewise for Custom Activation Functions, Initializers, Regularizers, and Constraints
+======================================================================================
+Same way as we did for custom loss.
+
+call() method for losses, layers (including activation functions), and models
+__call__() method for regularizers, initializers, and constraints
+
+For metrics , it is different
+Custom Metrics
+===============
+Losses and metrics are conceptually not the same thing.
+In most cases, defining a custom metric function is exactly the same as defining a custom loss function
+
+model.compile(loss="mse", optimizer="nadam", metrics=[create_huber(2.0)]) -->> huber loss in this example
+
+For each batch during training, Keras will compute this metric and keep track of its mean since the beginning of the epoch.
+Most of the time, this is exactly what you want. But not always! 
+Consider a binary classifier’s precision - You cannot take a mean here.Example of precision
+
+This is called a streaming metric (or stateful metric), as it is gradually updated, batch after batch.
+
+precision = keras.metrics.Precision()
+..............
+..............
+precision.result()
+precision.variables
+precision.reset_states()
+
+Here is a simple example that keeps track of the total Huber loss and the number of instances seen so far. 
+When asked for the result, it returns the ratio, which is simply the mean Huber loss.
+
+class HuberMetric(keras.metrics.Metric):
+	__init__
+		self.huber_fn = create_huber(threshold)
+		self.total = self.add_weight("total", initializer="zeros")
+		self.count = self.add_weight("count", initializer="zeros")
+	update_state():
+	    <code to update total and count>
+		self.total.assign_add
+	result(self):
+		return self.total / self.count
+	get_config(self):
+		base_config = super().get_config()
+		return {**base_config, "threshold": self.threshold}
+
+__init__
+The constructor uses the add_weight() method to create the variables needed to keep track of the metric’s state over multiple batches.
+
+Custom Layers:
+===============
+First, some layers have no weights, such as keras.layers.Flatten or keras.layers.ReLU. 
+If you want to create a custom layer without any weights
+Simplest option: Write a function and wrap it in a keras.layers.Lambda layer.
+
+exponential_layer = keras.layers.Lambda(lambda x: tf.exp(x)) ##Or you can use activation=keras.activations.exponential.
+
+The exponential layer is sometimes used in the output layer of a regression model when the values to predict have very different scales 
+(e.g., 0.001, 10., 1,000.)
+
+class MyDense(keras.layers.Layer):
+	def __init__(self, units, activation=None, **kwargs):
+		super().__init__(**kwargs)
+		self.units = units
+		self.activation = keras.activations.get(activation)										>>>>>>>>keras.activations.get(activation)
+	
+	def build(self, batch_input_shape):
+		self.kernel = self.add_weight(name="kernel", shape=[batch_input_shape[-1], self.units],initializer="glorot_normal")
+		self.bias = self.add_weight(name="bias", shape=[self.units], initializer="zeros")
+		super().build(batch_input_shape) # must be at the end									>>>>>>>>Tells layer is built
+	
+	def call(self, X):
+		return self.activation(X @ self.kernel + self.bias)										>>>>>>>>activation(wx+b)
+	def compute_output_shape(self, batch_input_shape):
+		return tf.TensorShape(batch_input_shape.as_list()[:-1] + [self.units])
+	def get_config(self):
+		base_config = super().get_config()
+		return {**base_config, "units": self.units,"activation": 
+		keras.activations.serialize(self.activation)}											>>>>>>>>Saved the activation function’s    
+																									    full configuration
+	
+The build() method’s role is to create the layer’s variables by calling the add_weight() method for each weight.
+The build() method is called the first time the layer is used(i.e when we know it's shape)
+
+At the end of the build() method (and only at the end), you must call the parent’s build() method: this tells Keras that the layer is built (it just sets
+self.built=True).
+
+For layer with multiple inputs, you need to send tuple and return lists in call() and compute_output_shape()
+
+If your model needs to perform different during training and during testing, add training=None in the call() method.
+Eg: In Dropout or BatchNormalization layers
+
+Custom Models:
+==============
+Example of building Residual blocks(layer which contains other layers). [Do not get confused with Wide-and-deep models]
+Put this residual block in a custom model.
+
+Implement the get_config() method in both the ResidualBlock class and the ResidualRegressor class.
+Alternatively, you can save and load the weights using the save_weights() and load_weights() methods.
+
+Losses and Metrics Based on Model Internals: ---- Need to see
+============================================
+
+Computing Gradients Using Autodiff:			 ---- Need to do some more reading
+===================================
+Backpropagation refers to the whole process of training an artificial neural network using multiple backpropagation
+steps, each of which computes gradients and uses them to perform a Gradient Descent step.
+In contrast, reverse-mode autodiff is just a technique to compute gradients efficiently, and it happens to be used by backpropagation.
+
+Types of Auto-Diff:
+1.manual differentiation
+2.finite difference approximation
+3.forward-mode autodiff
+4.reverse-mode autodiff(Tensorflow implements this)
+
+We create a tf.GradientTape context that will automatically record every operation that involves a variable, and finally we
+ask this tape to compute the gradients of the result z with regard to both variables [w1, w2].
+
+with tf.GradientTape() as tape:			>>>>>>>>>>>>>>>>>>Create GradientTape context
+	z = my_softplus(w1,w2)			    >>>>>>>>>>>>>>>>>>Loss function you defined.
+
+gradients = tape.gradient(z, [w1, w2])  >>>>>>>>>>>>>>>>>>>>>Call the tape's Gradient function
+
+tape.stop_recording()
+
+with tf.GradientTape(persistent=True)  >>>>>>>>>>>>>>>>>>>>>>Making the tape persistent
+
+The gradient() method only goes through the recorded computations once (in reverse order), no matter how many variables there are, so it is
+incredibly efficient. It’s like magic!
+
+Use a custom gradient by decorating the function with @tf.custom_gradient
+
+Custom Training Loops				   >>>>>>>>>>>>>>>>>>>>>>>Use 2 different optimizers, one for wide path, one for deep path....Error Prone...Just use fit()
+======================
+
+TensorFlow Functions and Graphs
+===============================
+1.@tf.function, tf_cube.python_function(2)
+2.It creates a computation graph under the hood.
+3.You want to boost a Python function, just transform it into a TF Function.
+4.Keras automatically converts custom fns to tf-functions internally. To avoid use model(dynamic=True) or complile(....run_eagerly=True)..eager execution, Graph execution.
+5.TF-functions handles polymorphism(uses same computation graphs) for tensor variables.
+
+AutoGraph and Tracing
+=====================
+How does TensorFlow create Graphs? 2 Steps
+1. AutoGraph --Creates a upgraded function...control flow statements will be converted to appropriate TF operations..It ends with for_stmt().
+2. Tracing -- Call this upgraded funcion by passing a symbolic tensor(without any actual value,shape), the Graph will be generated. This function ran in Graph mode.
+
+The function will run in graph mode, meaning that each TensorFlow operation
+will add a node in the graph to represent itself and its output tensor(s) (as
+opposed to the regular mode, called eager execution, or eager mode). In graph mode,
+TF operations do not perform any computations.
+
+tf.autograph.to_code(sum_squares.python_function) 		>>>>>>>>>>>>>To see upgraded function generated in AutoGraph(not pretty!)
+
+Next talked about some rules in order to convert a function to tf-function.
+
+Code:
+=====
+If you do the math, you will find that loss = metric * mean of sample weights (plus some floating point precision error).
+Example: history.history["loss"][0], history.history["huber_fn"][0] * sample_weight.mean()
+
+concrete_function = tf_cube.get_concrete_function(tf.constant(2.0))
+concrete_function.graph
+
+Need to see code thoroughly

@@ -1,0 +1,182 @@
+AI on mobile
+============
+General-purpose inference frameworks such as
+Core ML (from Apple), TensorFlow Lite (from Google), ML Kit (also from Google), and Fritz, 
+as well as chip-specific accelerator frameworks including
+Snapdragon Neural Processing Engine (from Qualcomm) and Huawei AI Mobile Computing Platform
+
+CoreML
+TensorFlow-Lite
+ML Kit
+=======
+ML Kit is a high-level library from Google that provides many computer vision,
+NLP, and AI functionalities out of the box, including the ability to run
+TensorFlow Lite models. Some of the features include face detection, barcode
+scanning, smart reply, on-device translation, and language identification.
+However, the main selling point of ML Kit is its integration with Google
+Firebase.
+
+Firebase
+=========
+A cloud-based framework that provides the necessary infrastructure for
+production-quality mobile applications, including analytics, crash reporting,
+A/B testing, push notifications, and more.
+
+Fritz
+======
+Fritz is a startup founded with the goal of making the end-to-end process of mobile inference easier.
+Removes gap between machine learning practitioners and mobile engineers
+Integrates training in Keras directly into the deployment pipeline, so a machine learning engineer could add a 
+single line of Keras callback to deploy the model to users immediately after it finishes training.
+USP of Fritz is the model protection feature.
+
+13.Shazam for Food:Developing Android Apps with TensorFlow Lite and ML Kit
+
+Could scan a few ingredients, and recommend a recipe.
+Blacklisted ingredients such as specific allergens.
+Several challenges:
+---------------------
+Data collection challenge
+Accuracy challenge
+	It should be right most of the time.
+Performance challenge
+	It should run near instantly.
+Platform challenge
+	Cross-platform development is a must.
+Develop a self-evolving approach for a model.
+
+An individual or a small team will quickly run into scaling issues trying to tackle this problem.
+
+TensorFlow-Lite Architecture (See pic)
+On Android, the GPU delegate accelerates performance using OpenGL
+
+Building an app on Android:
+----------------------------
+git clone https://github.com/tensorflow/tensorflow.git
+Open it in Android Studio, and deploy it on your phone
+You have built a simple object classification App. 
+
+But Developers of serious real-world applications with thousands or
+even millions of users need to think beyond just inference — like updating and
+distributing models, testing different versions among subsets of users,
+maintaining parity between iOS and Android, and ultimately reducing the
+engineering cost of each.
+This is where ML Kit and Firebase come in.
+
+ML Kit + Firebase
+==================
+ML Kit is a mobile SDK
+By default, ML Kit comes with a generic feature set in vision and language intelligence.
+Although many of these features are available in Core ML too, ML Kit has the added advantage of
+being cross-platform.
+
+Hosted Models:
+Firebase gives us is the ability to host our custom models on the cloud and download
+them within the app as needed. Simply copy the models over to Firebase on
+Google Cloud, reference the model on ML Kit inside the app, and we’re good to go.
+
+If we use ML Kit instead of vanilla TensorFlow Lite, we can simplify our code
+
+Custom Models in ML Kit
+=======================
+Following is a simple piece of code to load a custom model in MLKit
+val customModel = FirebaseLocalModelSource.Builder("my_custom_model").setAssetFilePath("my_custom_model.tflite").build()
+FirebaseModelManager.getInstance().registerLocalModelSource(customModel)
+
+We set up an interpreter based on our custom model:
+Next we run our input batch on the interpreter:
+
+Sometimes, we might want the app to dynamically download the model from the cloud for some reasons
+
+Hosted Models
+=============
+ML Kit, along with Firebase, gives us the ability to upload and store our model
+on Google Cloud and download it from the app when needed.
+
+Accessing a hosted model
+Notice that we set enableModelUpdates to enable us to push updates to the
+model from the cloud to the device. We can also optionally configure the
+conditions under which the model would be downloaded for
+
+https://console.firebase.google.com.
+simple process of creating, uploading, and storing a hosted model
+
+Fritz
+=====
+A vibrant community of contributors blogging about the latest in mobile AI on heartbeat.fritz.ai.
+
+Case Studies:
+=============
+Lose it !!
+Portrait Mode on Pixel 3 Phones - Bokeh effect - Uses a CNN to estimate the depth of each pixel in a scene
+Trained a neural network on a Frankenphone :)
+Speaker Recognition by Alibaba
+Face Contours in ML Kit
+Real-Time Video Segmentation in YouTube Stories
+YouTube Stories app — a real-time video segmentation option implemented over TensorFlow Lite.
+
+*****************************************************************************************
+Chapter 14. Building the Purrfect Cat Locator App with TensorFlow Object Detection API
+=========================================================================================
+We answer the following questions along the way:
+1.What are the different kinds of computer-vision tasks?
+2.How do I reuse a model pretrained for an existing class of objects?
+3.Can I train an object detector model without writing any code?
+4.I want more granular control for greater accuracy and speed. How do I train a custom object detector?
+
+Localization:
+Localization will work correctly only when it is guaranteed that there is a single instance of each class.
+
+Detection:
+When we have multiple objects belonging to multiple classes in the same image, localization will not suffice.
+Because of this ability, we also can use it in applications that need to count. For example, counting the number 
+of people in a crowd.
+
+Segmentation: Task of assigning a class label to individual pixels throughout an image.
+Segmentation produces groups of pixels — also known as masks.
+
+Approaches to Object Detection:
+-------------------------------
+1.Cloud-based object detection APIs
+2.Pretrained model
+MobileNetV2 (2018) and MobileNetV3 (2019)- Classification networks that can act as a backbone for object detection architectures like SSD MobileNetV2.
+
+! echo $PYTHONPATH
+import os
+os.environ['PYTHONPATH'] += ":/content/models/research:/content/models/research/slim"
+! echo $PYTHONPATH
+
+cp /content/Practical-Deep-Learning-Book/code/chapter-14/add_protoc.sh . && chmod +x add_protoc.sh && ./add_protoc.sh
+
+Now is the time to download our prebuilt model. In our case, we’re using the SSD MobileNetV2 model.
+TensorFlow’s object detection model zoo:
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+
+cd object_detection/
+wget http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_320x320_coco17_tpu-8.tar.gz
+unzip ssd_mobilenet_v2_320x320_coco17_tpu-8.tar.gz
+
+Test using
+https://colab.research.google.com/github/tensorflow/models/blob/master/research/object_detection/colab_tutorials/object_detection_tutorial.ipynb#scrollTo=mF-YlMl8c_bM
+
+
+
+3.Cloud-based model training(You can download model for Cloud or Edge as a bonus)
+4.Custom training a model
+
+
+
+
+
+Freelancing:
+=============
+toptal - prescreens applicants
+upwork
+freelance
+angel -list
+FounderDating
+guru.com
+wework.com
+
+Charge an Hourly rate or a fixed feed
+onlinerateexplorer @ codementor.io
