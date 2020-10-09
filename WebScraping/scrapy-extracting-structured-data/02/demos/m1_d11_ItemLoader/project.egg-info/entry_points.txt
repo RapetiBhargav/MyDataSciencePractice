@@ -1,3 +1,0 @@
-[scrapy]
-settings = m1_d11_ItemLoader.settings
-

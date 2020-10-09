@@ -1,0 +1,105 @@
+https://www.youtube.com/watch?v=fNxaJsNG3-s&list=PLQY2H8rRoyvzDbLUZkbudP-MFQZwNmU4S
+
+Roadmap to NLP:
+https://www.youtube.com/watch?v=fM4qTMfCoak&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm
+
+Text preprocessing Level 1: Tokenization,stemming, Lemmatization, Stop Words, POS
+Text preProcessing Level 2: Bag of words, TFIDF, Unigram, bigram , ngrams   ------ converting words into vectors
+Text preprocessing - Genism, word2vec, AvgWord2Vec ------advanced techniques of converting words into vectors
+ML algorithms- NB classfier , Multinomial NB classifier
+Skatrain
+
+https://www.youtube.com/watch?v=MO5n5JaRotc&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm&index=13
+Passive Aggressive Classifier algorithm @ 18:10
+
+MultinomialNB with alpha hyperparameter
+
+CountVectorizer, TfidfVectorizer, HashingVectorizer
+
+AI assistants
+
+https://www.youtube.com/watch?v=4-QoMdSqG_I
+@31:33 - AirBnb
+They found a way to project both users and listings in the same embedding space.
+So you can choose a user and the closest listings or other users to them.
+
+Alibaba:
+Taobao-C2C
+Graph embeddings - Next get sequences and do skipgram against these items.
+How to use side column data(like decription) to influence an embeddings.
+
+ASOS: - Fashion retailer - Calculate customer lifetime value.
+Users who have visited an item.
+Do skipgram against these users.
+Then you will have embedding against each user.
+
+Anghami
+Spotify - (you have playlist created by users. these have artist info....you have skipgram against the playlist to have related artists)
+
+https://www.youtube.com/watch?v=rDosBdOMoXU
+Aspect based sentiment analysis - Finding sentiment analysis, finding the positive or negative ones, find NER which mainly attributed to a positive or negative sentiment.
+
+NPI analysis - Net promotion Index
+
+Representation Learning - All about using neural networks to encode the input Text into vector representation.
+
+contraction and extraction of text...would'nt to would not etc
+
+You need to pass Parts of speech while doing lemmatization...or else it would be an "ineffective lemmatization".
+By default , POS is taken as a Noun while lemmatization.
+
+Document similarity - deriving features from a base feature vector like BOWs or even embeddings. You can use cosine similarity to see how each document is similar to other document using a score --- This is also called "Pairwise Similarity". Used in example of movie recommendation.
+
+NLP on sql---Big Query probably
+Best metric for Document similarity - Cosine similarity, Helinger, Jaccard similarity(for 1:1 matching)., Euclidean.
+
+Elastic Search 
+Modeling Fallacies in NLP
+
+https://www.youtube.com/watch?v=f2m6Mon0VE8
+FastText handles OOV out of the box..Like in twitter spelling mistakes etc..
+Build a language model for a domain, but it has lot of OOV
+Transformer handles OOV out of the box, but if there are lot of OOV , it will break every word into characters(not subword)..and this model will not be giving us good accuracy(or any other metric).
+
+Good solution: Vocab addition to the existing Language model. Add new words to the tokenizer, so the previous words won't be disturbed and we can use that transfer learning and the new words. So we have a new vocab. 
+Bottomline: Exploit the old model with the new vocab
+
+https://www.youtube.com/watch?v=VHm6_uC4vxM
+Search and recommendation are very similar: He shows how they are correlated in the later slides.
+
+Unsupervised search engines:
+Supervised search engines:
+
+BM25 score - Similar to TF-IDF.
+
+Query augmentation: We augment the query itself with certain sysnonymous words. Inject synonymns
+
+BM25-Elastic Search Scoring function
+
+BERT Series
+
+Zero shot, One shot, Few shot tasks.
+x
+
+https://www.youtube.com/channel/UCoRX98PLOsaN8PtekB9kWrw/videos
+Awesome list of BERT tutorials.Notes written in Dairy.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+

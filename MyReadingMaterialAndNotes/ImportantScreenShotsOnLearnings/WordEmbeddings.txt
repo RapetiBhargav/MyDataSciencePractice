@@ -1,0 +1,67 @@
+http://jalammar.github.io/illustrated-word2vec/
+Recent developments include contextualized word embeddings leading to cutting-edge models like BERT and GPT2
+
+Word2vec -  In addition to its utility as a word-embedding method, some of its concepts have been shown to be effective in creating recommendation engines and making sense of sequential data even in commercial, non-language tasks
+
+Using the Gensim library in python, we can add and subtract word vectors, and it would find the most similar words to the resulting vector
+
+Before we get to word2vec, we need to look at a conceptual parent of word embeddings: the neural language model.
+
+One of the results of the training process was this matrix that contains an embedding for each word in our vocabulary.
+During prediction time, we just look up the embeddings of the input word, and use them to calculate the prediction.
+
+Language models have a huge advantage over most other machine learning models. That advantage is that we are able to train them on running text – which we have an abundance of. Think of all the books, articles, Wikipedia content, and other forms of text data we have lying around. Contrast this with a lot of other machine learning models which need hand-crafted features and specially-collected data.
+
+Aside from neural-network-based approaches to language modeling, a technique called N-grams was commonly used to train language models.
+
+To see how this switch from N-grams to neural models reflects on real-world products.
+
+Some Blog: introducing their neural language model and comparing it with their previous N-gram model >>>>>Need to read
+
+We’d have our trained model and we can extract the embedding matrix from it and use it for any other application.
+
+Steps:
+Lookup embeddings
+Calculate Prediction
+Project to output vocabulary
+
+The third step is very expensive from a computational point of view – especially knowing that we will do it once for every training sample in our dataset
+
+One way is to split our target into two steps:
+
+1.Generate high-quality word embeddings (Don’t worry about next-word prediction).
+2.Use these high-quality embeddings to train a language model (to do next-word prediction).
+
+To generate high-quality embeddings using a high-performance model, we can switch the model’s task from predicting a neighboring word:
+
+This simple switch changes the model we need from a neural network, to a logistic regression model.
+This switch requires we switch the structure of our dataset.
+
+This idea is inspired by Noise-contrastive estimation [pdf]. We are contrasting the actual signal (positive examples of neighboring words) with noise (randomly selected words that are not neighbors)
+
+skipgram with negative sampling - This is what we have discussed.
+
+Embeddings and Context: We initialize these matrices with random values
+Then we start the training process. In each training step, we take one positive example and its associated negative examples.
+
+Then, we take the dot product of the input embedding with each of the context embeddings
+
+We can then stop the training process, discard the Context matrix, and use the Embeddings matrix as our pre-trained embeddings for the next task.
+
+Two key hyperparameters in the word2vec training process are the window size and the number of negative samples.
+
+Window Sizes:
+==============
+Smaller window sizes (2-15) lead to embeddings where high similarity scores between two embeddings indicates that the words are interchangeable
+Larger window sizes (15-50, or even more) lead to embeddings where similarity is more indicative of relatedness.
+In practice, you’ll often have to provide annotations that guide the embedding process leading to a useful similarity sense for your task.
+
+Number of negative samples:
+============================
+For a small dataset 5-20 as being a good number of negative samples
+For a large dataset 2-5 seems to be enough
+
+
+E=300*10000  10000*1=300*1
+
+

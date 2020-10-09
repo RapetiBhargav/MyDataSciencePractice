@@ -1,0 +1,64 @@
+You dont need to know about the graph
+More pythonic- you write an object , you deal with it like an object
+
+Pytorch is eagerly executed..Lot slower than regular tensorflow.
+Pytorch is faster than eager tensforflow
+
+numpy doesnt run on GPU.
+pytorch is just numpy on GPU with some nice helper functions.
+
+All the calculations you used to do in numpy has a variant in torch.
+
+y.view([1,10])-->>just like reshape in numpy....flatten.
+Show me y viewed as...something like that.
+
+torchvision- vision datasets.
+
+transform=transforms.Compose([transforms.toTensor()])
+
+load the data into an object that is going to iterate on the data.
+
+why do we need to try to iterate over the data??
+
+trainset=torch.utils.data.DataLoader(train,batch_size=10, shuffle=True)
+Iterate over this..
+for data in trainset:
+	print()
+	break:
+	
+plt.imshow(data[0][0].view(28,28))
+plt.imshow(data[0][0]) --->> will throw an error...since shape is [1,28,28]
+
+X=torch.rand((28,28))
+X=X.view(-1.28,28) >>>>> Check this
+
+"Unsupervised deep learning projects with Torch"
+
+Tensors are used as a replacement for numpy to use the power of GPUs.
+
+convert numpy to pytorch tensors.
+tensors=torch.from_numpy(arr) -- tensor and array uses the same memory location(disadvantage)
+tensor_arr=torch.tensor(arr) -- prevent by using this.
+
+Only tensors of floating point dtype can require gradients.
+
+optimizer.zero_grad() - clears the gradients of all optimized class.
+loss.backward()
+
+You must mention x_train , y_train as Cuda tensors.
+
+var1=torch.FloatTensor([1.0,2.0,3.0]).cuda()
+
+Checking if the layers in the model are using GPU
+for i in model.parameters():
+	print(i.is_cuda)
+
+model=model.cuda() --->> just use this to run on GPU.
+
+
+
+
+
+
+
+

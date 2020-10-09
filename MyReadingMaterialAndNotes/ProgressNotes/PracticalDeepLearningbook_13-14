@@ -1,0 +1,271 @@
+AI on mobile
+============
+General-purpose inference frameworks such as
+Core ML (from Apple), TensorFlow Lite (from Google), ML Kit (also from Google), and Fritz, 
+as well as chip-specific accelerator frameworks including
+Snapdragon Neural Processing Engine (from Qualcomm) and Huawei AI Mobile Computing Platform
+
+CoreML
+TensorFlow-Lite
+ML Kit
+=======
+ML Kit is a high-level library from Google that provides many computer vision,
+NLP, and AI functionalities out of the box, including the ability to run
+TensorFlow Lite models. Some of the features include face detection, barcode
+scanning, smart reply, on-device translation, and language identification.
+However, the main selling point of ML Kit is its integration with Google
+Firebase.
+
+Firebase
+=========
+A cloud-based framework that provides the necessary infrastructure for
+production-quality mobile applications, including analytics, crash reporting,
+A/B testing, push notifications, and more.
+
+Fritz
+======
+Fritz is a startup founded with the goal of making the end-to-end process of mobile inference easier.
+Removes gap between machine learning practitioners and mobile engineers
+Integrates training in Keras directly into the deployment pipeline, so a machine learning engineer could add a 
+single line of Keras callback to deploy the model to users immediately after it finishes training.
+USP of Fritz is the model protection feature.
+
+13.Shazam for Food:Developing Android Apps with TensorFlow Lite and ML Kit
+
+Could scan a few ingredients, and recommend a recipe.
+Blacklisted ingredients such as specific allergens.
+Several challenges:
+---------------------
+Data collection challenge
+Accuracy challenge
+	It should be right most of the time.
+Performance challenge
+	It should run near instantly.
+Platform challenge
+	Cross-platform development is a must.
+Develop a self-evolving approach for a model.
+
+An individual or a small team will quickly run into scaling issues trying to tackle this problem.
+
+TensorFlow-Lite Architecture (See pic)
+On Android, the GPU delegate accelerates performance using OpenGL
+
+Building an app on Android:
+----------------------------
+git clone https://github.com/tensorflow/tensorflow.git
+Open it in Android Studio, and deploy it on your phone
+You have built a simple object classification App. 
+
+But Developers of serious real-world applications with thousands or
+even millions of users need to think beyond just inference — like updating and
+distributing models, testing different versions among subsets of users,
+maintaining parity between iOS and Android, and ultimately reducing the
+engineering cost of each.
+This is where ML Kit and Firebase come in.
+
+ML Kit + Firebase
+==================
+ML Kit is a mobile SDK
+By default, ML Kit comes with a generic feature set in vision and language intelligence.
+Although many of these features are available in Core ML too, ML Kit has the added advantage of
+being cross-platform.
+
+Hosted Models:
+Firebase gives us is the ability to host our custom models on the cloud and download
+them within the app as needed. Simply copy the models over to Firebase on
+Google Cloud, reference the model on ML Kit inside the app, and we’re good to go.
+
+If we use ML Kit instead of vanilla TensorFlow Lite, we can simplify our code
+
+Custom Models in ML Kit
+=======================
+Following is a simple piece of code to load a custom model in MLKit
+val customModel = FirebaseLocalModelSource.Builder("my_custom_model").setAssetFilePath("my_custom_model.tflite").build()
+FirebaseModelManager.getInstance().registerLocalModelSource(customModel)
+
+We set up an interpreter based on our custom model:
+Next we run our input batch on the interpreter:
+
+Sometimes, we might want the app to dynamically download the model from the cloud for some reasons
+
+Hosted Models
+=============
+ML Kit, along with Firebase, gives us the ability to upload and store our model
+on Google Cloud and download it from the app when needed.
+
+Accessing a hosted model
+Notice that we set enableModelUpdates to enable us to push updates to the
+model from the cloud to the device. We can also optionally configure the
+conditions under which the model would be downloaded for
+
+https://console.firebase.google.com.
+simple process of creating, uploading, and storing a hosted model
+
+Fritz
+=====
+A vibrant community of contributors blogging about the latest in mobile AI on heartbeat.fritz.ai.
+
+Case Studies:
+=============
+Lose it !!
+Portrait Mode on Pixel 3 Phones - Bokeh effect - Uses a CNN to estimate the depth of each pixel in a scene
+Trained a neural network on a Frankenphone :)
+Speaker Recognition by Alibaba
+Face Contours in ML Kit
+Real-Time Video Segmentation in YouTube Stories
+YouTube Stories app — a real-time video segmentation option implemented over TensorFlow Lite.
+
+*****************************************************************************************
+Chapter 14. Building the Purrfect Cat Locator App with TensorFlow Object Detection API
+=========================================================================================
+We answer the following questions along the way:
+1.What are the different kinds of computer-vision tasks?
+2.How do I reuse a model pretrained for an existing class of objects?
+3.Can I train an object detector model without writing any code?
+4.I want more granular control for greater accuracy and speed. How do I train a custom object detector?
+
+Localization:
+Localization will work correctly only when it is guaranteed that there is a single instance of each class.
+
+Detection:
+When we have multiple objects belonging to multiple classes in the same image, localization will not suffice.
+Because of this ability, we also can use it in applications that need to count. For example, counting the number 
+of people in a crowd.
+
+Segmentation: Task of assigning a class label to individual pixels throughout an image.
+Segmentation produces groups of pixels — also known as masks.
+
+Approaches to Object Detection:
+-------------------------------
+1.Cloud-based object detection APIs
+2.Pretrained model
+MobileNetV2 (2018) and MobileNetV3 (2019)- Classification networks that can act as a backbone for object detection architectures like SSD MobileNetV2.
+
+! echo $PYTHONPATH
+import os
+os.environ['PYTHONPATH'] += ":/content/models/research:/content/models/research/slim"
+! echo $PYTHONPATH
+
+cp /content/Practical-Deep-Learning-Book/code/chapter-14/add_protoc.sh . && chmod +x add_protoc.sh && ./add_protoc.sh
+
+Now is the time to download our prebuilt model. In our case, we’re using the SSD MobileNetV2 model.
+TensorFlow’s object detection model zoo:
+https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+
+cd object_detection/
+wget http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_320x320_coco17_tpu-8.tar.gz
+unzip ssd_mobilenet_v2_320x320_coco17_tpu-8.tar.gz
+
+Test using
+https://colab.research.google.com/github/tensorflow/models/blob/master/research/object_detection/colab_tutorials/object_detection_tutorial.ipynb#scrollTo=mF-YlMl8c_bM
+
+Deploying to a Device
+Let’s do that using the handy script that comes with the TensorFlow Models
+repository. You can find the export_tflite_ssd_graph.py file in models/research/object_detection:
+!!!****We had a problem with this. This is not working as expected****!!!
+This script creates these 2 files.
+tflite_graph.pb
+tflite_graph.pbtxt
+Next use tflite_convert to convert .pb to .tflite
+$ tflite_convert --graph_def_file=tflite_model/tflite_graph.pb --output_file=tflite_model/model.tflite
+
+Check what these 3 things are Keras
+Frozen Graph, Saved model, Keras model
+
+However, Bob would do well for himself to improve the precision of his
+model by fine tuning it on data that has been generated within his garden. In the next section, we
+explore how to use transfer learning to build an object detector by using only a web-based tool. If
+
+3.Cloud-based model training(You can download model for Cloud or Edge as a bonus)
+CustomVision.ai,Google's Cloud AutoML, Apple's CreateML
+Additionally, Matroid allows you to build custom object detectors from video feeds, 
+which can be extremely useful to train a network without spending too much effort on
+building a dataset.
+
+4.Custom training a model
+In a very small set of scenarios, we might want further fine-grained control on factors such as
+accuracy, speech, model size, and resource usage. In the upcoming sections, we look at the world
+of object detection in a little more detail, from labeling the data all the way to deploying the model.
+
+Ross Girshik:
+Works on Deformable Part Models (DPM), R-CNN, Fast R-CNN, Faster R-CNN, You Only Look Once (YOLO), Mask R-CNN, 
+Feature Pyramid Network(FPN), RetinaNet, and ResNeXt to name
+
+Using the TensorFlow Object Detection API to Build Custom Models:
+-----------------------------------------------------------------
+We look at several steps in the process, including 
+1.collecting, 
+2.labeling, 
+3.preprocessing data, 
+4.training the model, and 
+5.exporting it to the TensorFlow Lite format.
+
+Data Collection:
+Option 1:Using ready-to-use datasets:
+MS COCO and Pascal VOC are used in most object detection benchmarks, 
+with COCO-based benchmarks being more realistic for real-world scenarios due to more complex imagery.
+
+Option 2:Downloading from the web - Fatkun
+Option 3:Taking pictures manually
+
+Resizing: Option 1
+To maintain uniformity of input size to our network, we resize all images to a fixed size.
+We can use the ImageMagick tool to resize all images at once. 
+$ apt-get install imagemagick
+$ mogrify -resize 800x600 *.jpg
+
+Resizing: Option 2(Use this if you have several tens of thousands of images)
+A solution would be to use the find command to list
+all of the images and pipe the output to the mogrify command
+$ find . -type f | awk -F. '!a[$NF]++{print $NF}' | xargs -I{} mogrify -resize 800x600 *.jpg
+
+wget https://www.kaggle.com/c/dogs-vs-cats-redux-kernels-edition/download/train.zip
+unzip train.zip
+mv train data
+cd data
+mkdir train val
+mkdir train/cat train/dog
+mkdir val/cat val/dog
+
+Labeling the Data: LabelImg
+============================
+You can save annotations either as XML files in PASCAL VOC format (also adopted by ImageNet) 
+or the YOLO format - .txt files
+
+What is something cheaper than drawing them? Verifying the correctness of already drawn boxes. 
+And that’s what we want to maximize.
+Rather than labeling large quantities of data manually, we’d go through an iterative semiautomated process of
+labeling. In this approach you’d do the following:
+1. Pick a small fraction of images from the pool of data.
+2. Manually label it with the object class and bounding box information.
+3. Train a model with the labeled data.
+4. Make predictions on the remaining unlabeled data using this model.
+5. If a prediction confidence is higher than a set threshold, assign that as the label.  >>>>>>>Imp points
+6. Pick a sample of the remaining predictions under this threshold.						 >>>>>>>Imp points
+7. In this sample, verify the predictions for correctness. If a prediction is incorrect, manually fix it. In practice, this
+usually means moving the bounding box slightly, which is much quicker than drawing the full bounding boxes.
+8. Add the images from the manually reviewed sample to the training dataset.			 >>>>>>>Imp points
+9. Repeat the process until the model achieves acceptable performance on a separate validation set.
+
+This approach is one way of using the technique known as active learning. Famous labeling companies like Figure
+Eight use this heavily to reduce labeling costs and increase efficiency so that a large majority of time is eventually
+spent on verification.
+
+Preprocessing the data:
+=======================
+We must preprocess it into a format that TensorFlow understands, namely TFRecords. Before we can convert our data into TFRecords, we must go through the intermediate step of consolidating the data from all the XML files into a single
+comma-separated values (CSV) file. TensorFlow provides helper scripts
+
+
+Freelancing:
+=============
+toptal - prescreens applicants
+upwork
+freelance
+angel -list
+FounderDating
+guru.com
+wework.com
+
+Charge an Hourly rate or a fixed feed
+onlinerateexplorer @ codementor.io

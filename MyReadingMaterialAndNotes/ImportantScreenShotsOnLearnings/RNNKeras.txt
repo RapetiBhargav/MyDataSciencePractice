@@ -1,0 +1,37 @@
+https://amitness.com/2020/04/recurrent-layers-keras/
+
+Understand 
+1.how to prepare input data shape, 
+2.how various attributes of the layers affect the outputs, 
+3.and how to compose these layers with the provided abstraction.
+
+Chapter 15. Processing Sequences Using RNNs and CNNs
+=====================================================
+They can analyze time series data such as stock prices,anticipate car trajectories in autonomous driving systems 
+and help avoid accidents.
+They can take sentences, documents, or audio samples as input, making them extremely useful for 
+NLP applications such as automatic translation or speech-to-text.
+
+Two main difficulties that RNNs face:
+1.Unstable gradients which can be alleviated using various techniques, 
+including recurrent dropout and recurrent layer normalization
+
+2.A (very) limited short-term memory, which can be extended using LSTM and GRU cells
+
+RNNs are not the only types of neural networks capable of handling sequential data: 
+For small sequences: A regular dense network can do the trick.
+For very long sequences: such as audio samples or text, convolutional neural networks can actually work quite well too. 
+
+WaveNet: this is a CNN architecture capable of handling sequences of tens of thousands of time steps. 
+In Chapter 16 -->> Explore more on RNNs and see how to use them for natural language processing, along with more recent architectures based on attention mechanisms.
+
+We have focused on feedforward neural networks, where the activations flow only in one direction, from the input layer to the output layer (a few exceptions are discussed in Appendix E).
+
+Unrolling the network through time.
+
+Questions:
+1.During training how can we set cost function to be computed using only the last three outputs of the network?
+2.A cell’s hidden state and its output may be different. For a basic RNN, they are same.
+
+
+

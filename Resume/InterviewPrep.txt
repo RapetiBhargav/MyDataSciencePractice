@@ -1,0 +1,170 @@
+ Python, spaCy, NLTK, NumPy, Pandas, Artificial Intelligence, Machine Learning, Deep Learning, NLP-Natural Language Processing, Tensorflow2, Detectron2, Tesseract, OpenCV, Flask, and Django
+ 
+ spacy- 
+ NLTK - 
+ 
+ NLP:
+ Automation summarization
+ Machine Translation
+ NER(Named entity recognition)
+ Relationship extraction
+ Sentimental Analysis
+ Speech Recognition
+ Topic Segmentations
+ 
+ Making Appointments
+ Buying Things
+ Spell Checking
+ Generating Response
+ Social Media Monitoring
+ 
+ Keyword search
+ Information Extraction
+ Sentimental 
+ Speech Recognition
+ Chatbot
+ Machine Translation
+
+NLU, NLG
+
+50 corpora and Lexical resources such as wordnet
+Suite of text processing libraries for classification, tokenization, stemming , tagging 
+
+nltk.download
+
+tokens
+
+word_tokenize
+FreqDist function
+
+nltk.probability import FreqDist
+
+fdist
+len
+
+fdist.most_common()
+blankline_tokenize
+
+Bigrams - Tokens of 2 consecutive written words.
+Trigrams - Tokens of 3 consecutive written words.
+
+Stemming- Normalize words into its base form (affect - affection etc)
+
+PorterStemmer
+stem('having') 
+
+LancasterStemmer - more aggresive than Porter stemmer , to check how many times the word giv is used, use LancasterStemmer
+SnowBall Stemmer
+
+Stemming Does not always result in giving us the root word.
+fish, fishes, fishing - fish
+
+Lemmetization - Considers the morphological analysis of the word
+It needs to have a detailed dictionary for the algorithm to look into to link the form back to its lemma.
+
+Output of Lemmatization is a proper word.
+
+wordnet - this is the dictionary
+WordNetLemmetizer()
+
+POS tags and descriptions
+Parts of Speech(noun , pronoun , adjective, adverb)
+
+Stop Words
+
+Using POS tags
+"is eating" is considered as a single term.
+This is one of the shortcomings of POS tags when it comes to tying the words.
+
+NER - Named Entity Recognition
+The process of detecting the names entities.
+Steps in NER
+1. Noun phrase identification - extracts all the noun phrases from the text using dependency passing and POS tagging
+2. Phrase classification - location , names and much more
+Or one can create a look up table and dictionary by combining information from different sources
+3. Entity disambiguation
+
+Sometimes its possible that the entities are misclassified. Hence creating a validation layer - The result is very useful
+
+The use of knowledge Graphs can be exploited for this purpose.
+Google Knowledge Graphs
+IBM Watson
+Wikipedia.
+
+ne_chunck
+
+Syntax Tree - Phase Structure Rules.(you can use POS tags and Dictionary to create a Syntax Tree)
+
+We created a Syntax tree for the input sentence.
+
+Inorder to render syntax trees in your notebook, you need to install GhostScript.
+
+Detectron2:
+Dense Pose Prediction
+Panoptic Segmentation (Task that segments both instances and background pixels)
+
+Backbone of CNN layers:
+Resnet+ShuffleNet+FBNet
+
+Backbone-->> Region Proposals --->>Crop and wrap (Box, Mask, Keypoint, DensePose, Semantic Segmentation)
+
+Customizations:
+modify registry
+
+Predecessors: Mask R-CNN, Panoptic FPN, DensePose, Mesh R-CNN
+
+Docker is fixing the environment standardization
+Isolation, Portability
+Build once , deploy anywhere
+
+WSGI- Webserver Gateway interface.
+
+Apache , Azure, AWS webserver
+
+A Swagger API- Flasgger library to create a frontend simple application.
+
+Flask :
+Load the classifier as a Pickle file
+
+@app.route('/') --> use this decorator
+This is my welcome page
+
+from flasgger import Swagger
+Toolbox releases
+
+Docker Commands:
+Docker file has these commands -- From, copy, expose, workdir, run, cmd
+Base Image - OS , Ubuntu
+
+Network Interface:
+
+Write the docker file
+Building the docker Image
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+ 
